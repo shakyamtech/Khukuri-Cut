@@ -44,14 +44,14 @@ export const KhukuriBarberLogo: React.FC<{ size?: number }> = ({ size = 135 }) =
     <path d="M 160 98 L 162 92 L 168 92 L 163 88 L 165 82 L 160 85 L 155 82 L 157 88 L 152 92 L 158 92 Z" fill="#d5a353"/>
 
     {/* Top Text Arch */}
-    <path id="topArch" d="M 35 98 A 65 65 0 0 1 165 98" fill="none" />
+    <path id="topArch" d="M 38 98 A 64 64 0 0 1 162 98" fill="none" />
     <text fill="#d5a353" fontSize="13" fontFamily="Teko" letterSpacing="4" textAnchor="middle">
       <textPath href="#topArch" startOffset="50%">BARBERSHOP &amp; TATTOO</textPath>
     </text>
 
-    {/* Bottom Text Arch */}
-    <path id="bottomArch" d="M 28 120 A 72 72 0 0 0 172 120" fill="none" />
-    <text fill="#d5a353" fontSize="16" fontFamily="Teko" letterSpacing="3" fontWeight="bold" textAnchor="middle">
+    {/* Bottom Text Arch (Moved inward so text never touches circle lines) */}
+    <path id="bottomArch" d="M 42 102 A 60 60 0 0 0 158 102" fill="none" />
+    <text fill="#d5a353" fontSize="15" fontFamily="Teko" letterSpacing="3" fontWeight="bold" textAnchor="middle">
       <textPath href="#bottomArch" startOffset="50%">KHUKURI CUT</textPath>
     </text>
   </svg>
