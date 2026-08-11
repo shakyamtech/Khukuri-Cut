@@ -14,12 +14,12 @@ export const Welcome: React.FC<WelcomeProps> = ({ onLearnMore }) => {
       ></div>
 
       <div className="welcome_text_box">
-        <h2>WELCOME TO BERGER</h2>
+        <h2>WELCOME TO KHUKURI CUT</h2>
         <h5>
-          Berger is an premier vintage barbershop located in the heart of Durbar Marg, Kathmandu
+          Khukuri Cut is a premier vintage barbershop located in the heart of Durbar Marg, Kathmandu
         </h5>
         <p>
-          Established with a passion for traditional craftsmanship and contemporary style, Berger Barbershop brings world-class hair grooming, hot towel straight razor shaving, and personalized beard styling to Kathmandu. Our master barbers combine years of artistic mastery with modern techniques to deliver an unparalleled luxury experience.
+          Established with a passion for traditional craftsmanship and contemporary style, Khukuri Cut Barbershop brings world-class hair grooming, hot towel straight razor shaving, and personalized beard styling to Kathmandu. Our master barbers combine years of artistic mastery with modern techniques to deliver an unparalleled luxury experience.
         </p>
 
         <div>

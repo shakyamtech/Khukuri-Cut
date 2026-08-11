@@ -63,7 +63,7 @@ export const Services: React.FC<ServicesProps> = ({ onBookService }) => {
         <div className="section_title_wrap">
           <h2 className="section_title">OUR SERVICES</h2>
           <p className="section_subtitle">
-            Berger Barbershop provides authentic premium grooming services crafted specifically for modern Nepali gentlemen.
+            Khukuri Cut Barbershop provides authentic premium grooming services crafted specifically for modern Nepali gentlemen.
           </p>
           <div className="separator_line"></div>
         </div>

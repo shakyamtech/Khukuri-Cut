@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
               <path d="M35 35L65 65M65 35L35 65" stroke="#d5a353" strokeWidth="6" strokeLinecap="round"/>
               <circle cx="50" cy="50" r="12" fill="#d5a353"/>
             </svg>
-            <div className="logo_text">BERGER</div>
+            <div className="logo_text">KHUKURI CUT</div>
           </div>
 
           <div className="nav_right_actions">

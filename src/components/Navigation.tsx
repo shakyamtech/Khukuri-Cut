@@ -31,7 +31,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="drawer_overlay" onClick={onCloseMenu}></div>
           <div className="side_drawer">
             <div className="drawer_header">
-              <h3>BERGER SALON</h3>
+              <h3>KHUKURI CUT SALON</h3>
               <button className="close_btn" onClick={onCloseMenu} title="Close Menu">
                 <X size={24} />
               </button>

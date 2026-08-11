@@ -41,7 +41,7 @@ export function App() {
   };
 
   const handleCheckout = () => {
-    alert('Thank you for ordering with Berger Barbershop Kathmandu! We will contact you to confirm payment and delivery.');
+    alert('Thank you for ordering with Khukuri Cut Kathmandu! We will contact you to confirm payment and delivery.');
     setCartItems([]);
     setIsCartOpen(false);
   };

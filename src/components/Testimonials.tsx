@@ -12,7 +12,7 @@ interface Testimonial {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
-    text: "Nothing like a neat beard and a proper fade haircut makes a man look truly stylish. I appreciate Laxman's incredible attention to detail at Berger. The hot towel shave is pure luxury in Kathmandu!",
+    text: "Nothing like a neat beard and a proper fade haircut makes a man look truly stylish. I appreciate Laxman's incredible attention to detail at Khukuri Cut. The hot towel shave is pure luxury in Kathmandu!",
     author: "Bishal Gurung",
     role: "Tech Entrepreneur, Kathmandu",
     rating: 5,
@@ -26,7 +26,7 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     id: 3,
-    text: "Top-notch hygiene, vintage aesthetic, and skilled hands. I visited Berger Durbar Marg before my wedding and got a haircut & beard trim combo. Couldn't be happier with the results!",
+    text: "Top-notch hygiene, vintage aesthetic, and skilled hands. I visited Khukuri Cut Durbar Marg before my wedding and got a haircut & beard trim combo. Couldn't be happier with the results!",
     author: "Prashant Shrestha",
     role: "Architect, Lalitpur",
     rating: 5,
@@ -64,7 +64,7 @@ export const Testimonials: React.FC = () => {
         <div className="section_title_wrap">
           <h2 className="section_title dark_theme">TESTIMONIALS</h2>
           <p className="section_subtitle" style={{ color: '#d8cfc4' }}>
-            Hear what our esteemed clients in Kathmandu say about their experience at Berger.
+            Hear what our esteemed clients in Kathmandu say about their experience at Khukuri Cut.
           </p>
           <div className="separator_line"></div>
         </div>

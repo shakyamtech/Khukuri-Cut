@@ -19,7 +19,7 @@ const STAFF_MEMBERS: StaffMember[] = [
     image: '/images/barber_1.png',
     experience: '12+ Years Experience',
     specialty: 'Classic Scissor Cuts & Fade Mastery',
-    bio: 'Subash trained in London and Mumbai before leading the master team at Berger. He specializes in bespoke hair consultations and traditional razor styling.',
+    bio: 'Subash trained in London and Mumbai before leading the master team at Khukuri Cut. He specializes in bespoke hair consultations and traditional razor styling.',
   },
   {
     id: 'laxman',

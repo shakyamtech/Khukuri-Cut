@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
       <div className="content_wrap">
         <div style={{ marginBottom: '25px' }}>
           <div style={{ fontFamily: 'Teko', fontSize: '2.5rem', color: '#d5a353', letterSpacing: '2px' }}>
-            BERGER BARBERSHOP & TATTOO
+            KHUKURI CUT BARBERSHOP & TATTOO
           </div>
           <p style={{ fontFamily: 'Merriweather', fontStyle: 'italic', color: '#88827b', fontSize: '0.95rem' }}>
             Durbar Marg, Kathmandu, Nepal • Phone: +977 1-4220000
@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
 
         <div className="footer_text">
           <p>
-            © {new Date().getFullYear()} Berger Barbershop Nepal. All Rights Reserved. Crafted with pride.
+            © {new Date().getFullYear()} Khukuri Cut Nepal. All Rights Reserved. Crafted with pride.
           </p>
           <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#66605a' }}>
             <a href="#home" style={{ margin: '0 10px' }}>Terms of Use</a> | 
