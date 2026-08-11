@@ -64,6 +64,7 @@ button {
   border: none;
   outline: none;
   font-family: inherit;
+  background: transparent;
 }
 
 /* Common Container & Section Layouts */
@@ -231,11 +232,13 @@ button {
 .menu_toggle_icon {
   width: 44px;
   height: 44px;
-  border: 1px solid rgba(213, 163, 83, 0.4);
+  background-color: rgba(25, 21, 20, 0.7);
+  border: 1px solid var(--color-gold);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-gold);
+  border-radius: 4px;
   transition: all var(--transition-fast);
 }
 
