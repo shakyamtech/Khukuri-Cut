@@ -15,10 +15,6 @@ export const KhukuriBarberLogo: React.FC<{ size?: number }> = ({ size = 135 }) =
     <circle cx="100" cy="100" r="92" stroke="#d5a353" strokeWidth="2.5" strokeDasharray="6 4"/>
     <circle cx="100" cy="100" r="82" stroke="#d5a353" strokeWidth="1.5"/>
 
-    {/* Top Text */}
-    <text x="100" y="34" fill="#d5a353" fontSize="13" fontFamily="Teko" letterSpacing="4" textAnchor="middle" fontWeight="bold">
-      BARBERSHOP &amp; TATTOO
-    </text>
 
     {/* Center Emblem: Barber Scissors & Razor Blade */}
     <g transform="translate(0, -6)">
