@@ -316,7 +316,7 @@ button {
 
 .welcome_image_box {
   background-size: cover;
-  background-position: center;
+  background-position: top center;
   position: relative;
   min-height: 400px;
 }

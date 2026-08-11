@@ -8,10 +8,13 @@ interface WelcomeProps {
 export const Welcome: React.FC<WelcomeProps> = ({ onLearnMore }) => {
   return (
     <section className="welcome_section" id="about">
-      <div
-        className="welcome_image_box"
-        style={{ backgroundImage: "url('/images/about_promo.png')" }}
-      ></div>
+      <div className="welcome_image_box" style={{ overflow: 'hidden', position: 'relative' }}>
+        <img
+          src="/images/about_promo.png"
+          alt="Khukuri Cut Master Barber"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
+        />
+      </div>
 
       <div className="welcome_text_box">
         <h2>WELCOME TO KHUKURI CUT</h2>
