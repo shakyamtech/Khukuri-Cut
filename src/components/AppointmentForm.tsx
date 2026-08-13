@@ -33,6 +33,16 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
       return;
     }
 
+    // Save appointment to localStorage for admin panel
+    const newAppt = {
+      id: `real-${Date.now()}`,
+      ...formData,
+      status: 'pending',
+      submittedAt: new Date().toISOString(),
+    };
+    const existing = JSON.parse(localStorage.getItem('kc_appointments') || '[]');
+    localStorage.setItem('kc_appointments', JSON.stringify([newAppt, ...existing]));
+
     setIsSubmitted(true);
     confetti({
       particleCount: 100,

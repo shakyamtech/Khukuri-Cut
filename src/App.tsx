@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+// Main site components
 import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { Welcome } from './components/Welcome';
@@ -13,7 +16,17 @@ import { CartDrawer } from './components/CartDrawer';
 import type { CartItem } from './components/CartDrawer';
 import { Footer } from './components/Footer';
 
-export function App() {
+// Admin pages
+import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminLayout } from './pages/admin/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminAppointments } from './pages/admin/AdminAppointments';
+import { AdminServices } from './pages/admin/AdminServices';
+import { AdminStaff } from './pages/admin/AdminStaff';
+import { AdminProducts } from './pages/admin/AdminProducts';
+
+// ─── Main Site Page ───────────────────────────────────────────────────────────
+function MainSite() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -62,7 +75,6 @@ export function App() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#191514' }}>
-      {/* Header Banner */}
       <Header
         onOpenCart={() => setIsCartOpen(true)}
         onOpenMenu={() => setIsMenuOpen(true)}
@@ -70,8 +82,6 @@ export function App() {
         onBookClick={() => scrollToSection('appointment')}
         cartCount={totalCartCount}
       />
-
-      {/* Navigation Drawers */}
       <Navigation
         isMenuOpen={isMenuOpen}
         isSearchOpen={isSearchOpen}
@@ -79,29 +89,13 @@ export function App() {
         onCloseSearch={() => setIsSearchOpen(false)}
         onNavigate={scrollToSection}
       />
-
-      {/* Welcome / About Split Section */}
       <Welcome onLearnMore={() => scrollToSection('services')} />
-
-      {/* Services Section */}
       <Services onBookService={handleBookService} />
-
-      {/* Testimonials & Brands Section */}
       <Testimonials />
-
-      {/* Our Staff Section */}
       <Staff />
-
-      {/* Price List Section */}
       <PriceList onBookClick={() => scrollToSection('appointment')} />
-
-      {/* Grooming E-Commerce Shop Section */}
       <Shop onAddToCart={handleAddToCart} />
-
-      {/* Appointment Booking Section */}
       <AppointmentForm initialService={bookingService} />
-
-      {/* Shopping Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -109,10 +103,41 @@ export function App() {
         onRemoveItem={handleRemoveFromCart}
         onCheckout={handleCheckout}
       />
-
-      {/* Site Footer */}
       <Footer />
     </div>
+  );
+}
+
+// ─── App with Router ──────────────────────────────────────────────────────────
+export function App() {
+  return (
+    <Routes>
+      {/* Main website */}
+      <Route path="/" element={<MainSite />} />
+
+      {/* Admin login */}
+      <Route path="/admin" element={<AdminLogin />} />
+
+      {/* Admin panel (protected layout) */}
+      <Route path="/admin/dashboard" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+      </Route>
+      <Route path="/admin/appointments" element={<AdminLayout />}>
+        <Route index element={<AdminAppointments />} />
+      </Route>
+      <Route path="/admin/services" element={<AdminLayout />}>
+        <Route index element={<AdminServices />} />
+      </Route>
+      <Route path="/admin/staff" element={<AdminLayout />}>
+        <Route index element={<AdminStaff />} />
+      </Route>
+      <Route path="/admin/products" element={<AdminLayout />}>
+        <Route index element={<AdminProducts />} />
+      </Route>
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
