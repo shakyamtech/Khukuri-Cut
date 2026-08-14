@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { ExternalLink, X, Calendar, Clock, Scissors, CheckCircle2, UserCheck } from 'lucide-react';
+import { ExternalLink, X, Calendar, Clock, Scissors, CheckCircle2, UserCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getStoredStaff, STAFF_UPDATED_EVENT } from '../utils/staffStorage';
 import type { StaffMember, StaffStatus } from '../utils/staffStorage';
 
@@ -25,6 +25,15 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedBarberId, setSelectedBarberId] = useState<string>('any');
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -360, behavior: 'smooth' });
+  };
+
+  const handleScrollRight = () => {
+    scrollRef.current?.scrollBy({ left: 360, behavior: 'smooth' });
+  };
 
   const [formData, setFormData] = useState({
     ...EMPTY_FORM,
@@ -135,45 +144,73 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
           <div className="separator_line"></div>
         </div>
 
-        {/* Staff Grid */}
-        <div className="staff_grid">
-          {staffMembers.map((barber) => (
-            <div className="staff_card" key={barber.id} onClick={() => openBookingModal(barber)} style={{ cursor: 'pointer' }}>
-              <div className="staff_avatar_wrap">
-                <img src={barber.image} alt={barber.name} />
-              </div>
-              <div className="staff_info">
-                <h3>{barber.name}</h3>
-                <div className="role">{barber.role}</div>
-                {renderStatusBadge(barber.status, barber.statusNote)}
-                <div style={{ marginTop: '12px' }}>
-                  <button
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(213,163,83,0.15), rgba(213,163,83,0.05))',
-                      border: '1px solid #d5a353',
-                      color: '#d5a353',
-                      padding: '8px 20px',
-                      fontFamily: 'Teko',
-                      fontSize: '1.2rem',
-                      letterSpacing: '1px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      cursor: 'pointer',
-                      borderRadius: '4px',
-                      transition: 'all 0.25s ease',
-                      width: '100%',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Calendar size={16} />
-                    <span>BOOK APPOINTMENT</span>
-                    <ExternalLink size={14} />
-                  </button>
+        {/* Staff Cards Carousel Slider */}
+        <div style={{ position: 'relative', margin: '0 auto', maxWidth: '1200px' }}>
+          {/* Left Arrow Button */}
+          {staffMembers.length > 3 && (
+            <button
+              onClick={handleScrollLeft}
+              aria-label="Previous Barber"
+              className="carousel_arrow_btn left"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          {/* Carousel Scroll Container */}
+          <div
+            ref={scrollRef}
+            className="staff_carousel_container"
+          >
+            {staffMembers.map((barber) => (
+              <div className="staff_card" key={barber.id} onClick={() => openBookingModal(barber)} style={{ cursor: 'pointer' }}>
+                <div className="staff_avatar_wrap">
+                  <img src={barber.image} alt={barber.name} />
+                </div>
+                <div className="staff_info">
+                  <h3>{barber.name}</h3>
+                  <div className="role">{barber.role}</div>
+                  {renderStatusBadge(barber.status, barber.statusNote)}
+                  <div style={{ marginTop: '12px' }}>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(213,163,83,0.15), rgba(213,163,83,0.05))',
+                        border: '1px solid #d5a353',
+                        color: '#d5a353',
+                        padding: '8px 20px',
+                        fontFamily: 'Teko',
+                        fontSize: '1.2rem',
+                        letterSpacing: '1px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        cursor: 'pointer',
+                        borderRadius: '4px',
+                        transition: 'all 0.25s ease',
+                        width: '100%',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Calendar size={16} />
+                      <span>BOOK APPOINTMENT</span>
+                      <ExternalLink size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Right Arrow Button */}
+          {staffMembers.length > 3 && (
+            <button
+              onClick={handleScrollRight}
+              aria-label="Next Barber"
+              className="carousel_arrow_btn right"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
 
         {/* Any Barber Quick Booking Bar */}

@@ -544,6 +544,70 @@ button {
   gap: 30px;
 }
 
+/* Staff Carousel Slider */
+.staff_carousel_container {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 10px 4px 20px;
+  scrollbar-width: none;
+}
+
+.staff_carousel_container::-webkit-scrollbar {
+  display: none;
+}
+
+.staff_carousel_container .staff_card {
+  flex: 1 1 calc(33.333% - 20px);
+  min-width: 320px;
+  scroll-snap-align: start;
+}
+
+.carousel_arrow_btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(25, 21, 20, 0.92);
+  border: 1.5px solid #d5a353;
+  color: #d5a353;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+}
+
+.carousel_arrow_btn:hover {
+  background: #d5a353;
+  color: #191514;
+  box-shadow: 0 0 20px rgba(213, 163, 83, 0.5);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel_arrow_btn.left {
+  left: -22px;
+}
+
+.carousel_arrow_btn.right {
+  right: -22px;
+}
+
+@media (max-width: 768px) {
+  .carousel_arrow_btn.left { left: 4px; }
+  .carousel_arrow_btn.right { right: 4px; }
+  .staff_carousel_container .staff_card {
+    min-width: 280px;
+  }
+}
+
 .staff_card {
   background-color: var(--color-dark-card);
   border: 1px solid rgba(213, 163, 83, 0.15);
