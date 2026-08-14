@@ -157,6 +157,120 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                 </div>
               </div>
 
+              {/* Barber Selector Cards */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: '#d5a353', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
+                  SELECT PREFERRED BARBER:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
+                  {/* Any Barber Option */}
+                  <div
+                    onClick={() => setFormData({ ...formData, barber: 'Any Master Barber' })}
+                    style={{
+                      background: formData.barber === 'Any Master Barber' ? 'rgba(213, 163, 83, 0.18)' : 'rgba(255,255,255,0.03)',
+                      border: formData.barber === 'Any Master Barber' ? '2px solid #d5a353' : '1px solid rgba(213, 163, 83, 0.25)',
+                      borderRadius: '12px',
+                      padding: '12px 8px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                      boxShadow: formData.barber === 'Any Master Barber' ? '0 4px 16px rgba(213, 163, 83, 0.2)' : 'none',
+                    }}
+                  >
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px', fontWeight: 800, fontSize: '1.2rem' }}>
+                      ✂️
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: '#f9f6f2', fontWeight: 700 }}>Any Barber</div>
+                    <div style={{
+                      display: 'inline-block',
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      marginTop: '6px',
+                      color: '#d5a353',
+                      background: 'rgba(213, 163, 83, 0.15)',
+                      border: '1px solid rgba(213, 163, 83, 0.3)',
+                      letterSpacing: '0.5px'
+                    }}>
+                      AVAILABLE
+                    </div>
+                  </div>
+
+                  {/* Individual Barber Avatar Cards */}
+                  {staffList.map((barber) => {
+                    const isSelected = formData.barber === barber.name;
+                    const isAvailable = barber.status === 'available';
+                    const isBusy = barber.status === 'busy';
+                    const color = isAvailable ? '#22c55e' : isBusy ? '#eab308' : '#ef4444';
+                    const statusText = isAvailable ? 'AVAILABLE' : isBusy ? 'IN SESSION' : 'ON LEAVE';
+
+                    return (
+                      <div
+                        key={barber.id}
+                        onClick={() => setFormData({ ...formData, barber: barber.name })}
+                        style={{
+                          background: isSelected ? `${color}20` : 'rgba(255,255,255,0.03)',
+                          border: isSelected ? `2px solid ${color}` : `1px solid ${color}45`,
+                          borderRadius: '12px',
+                          padding: '12px 8px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          position: 'relative',
+                          boxShadow: isSelected ? `0 4px 20px ${color}35` : 'none',
+                          transition: 'all 0.25s ease',
+                          transform: isSelected ? 'translateY(-2px)' : 'none',
+                        }}
+                      >
+                        <div style={{ position: 'relative', width: '52px', height: '52px', margin: '0 auto 8px' }}>
+                          <img
+                            src={barber.image}
+                            alt={barber.name}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                              border: `2px solid ${color}`,
+                            }}
+                          />
+                          <span
+                            style={{
+                              position: 'absolute',
+                              bottom: 0,
+                              right: 0,
+                              width: 12,
+                              height: 12,
+                              borderRadius: '50%',
+                              background: color,
+                              border: '2px solid #191514',
+                              boxShadow: isAvailable ? '0 0 8px #22c55e' : 'none',
+                            }}
+                          />
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: '#f9f6f2', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {barber.name.split(' ')[0]}
+                        </div>
+                        <div style={{
+                          display: 'inline-block',
+                          fontSize: '0.65rem',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '10px',
+                          marginTop: '6px',
+                          color: color,
+                          background: `${color}18`,
+                          border: `1px solid ${color}35`,
+                          letterSpacing: '0.5px'
+                        }}>
+                          {statusText}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="form_grid_2col">
                 <div>
                   <select
@@ -175,23 +289,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                 <div>
                   <select
                     className="form_select"
-                    value={formData.barber}
-                    onChange={(e) => setFormData({ ...formData, barber: e.target.value })}
-                  >
-                    <option value="Any Master Barber">Any Available Master Barber</option>
-                    {staffList.map((barber) => (
-                      <option key={barber.id} value={barber.name}>
-                        {barber.name} ({barber.status === 'available' ? '🟢 Available Now' : barber.status === 'busy' ? '🔴 In Session' : '🟡 On Break'})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form_grid_2col" style={{ marginTop: '20px' }}>
-                <div>
-                  <select
-                    className="form_select"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   >
@@ -203,16 +300,16 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                     <option value="07:00 PM">07:00 PM</option>
                   </select>
                 </div>
-                <div>
-                  <textarea
-                    className="form_textarea"
-                    rows={1}
-                    style={{ height: '52px', padding: '12px 18px', resize: 'none' }}
-                    placeholder="Special instructions or hair style preferences (Optional)..."
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  ></textarea>
-                </div>
+              </div>
+
+              <div style={{ marginTop: '20px', marginBottom: '10px' }}>
+                <textarea
+                  className="form_textarea"
+                  rows={2}
+                  placeholder="Special instructions or hair style preferences (Optional)..."
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                ></textarea>
               </div>
 
               <div className="checkbox_row">
