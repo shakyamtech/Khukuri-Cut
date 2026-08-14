@@ -1204,38 +1204,214 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   to { transform: translateX(0); }
 }
 
-/* Responsive Styles */
+/* ==========================================================================
+   Dedicated Mobile & Tablet Responsive Design System
+   ========================================================================== */
+
+/* Tablets & Laptops (max-width: 1024px) */
 @media (max-width: 1024px) {
+  .content_wrap {
+    padding: 0 24px;
+  }
+
   .welcome_section, .prices_section {
     grid-template-columns: 1fr;
+    gap: 0;
   }
-  .services_grid, .shop_grid {
+
+  .welcome_image_box, .prices_image_box {
+    min-height: 380px;
+  }
+
+  .services_grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
-  .staff_grid {
-    grid-template-columns: 1fr;
+
+  .shop_grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
+
   .header_info_bar {
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 20px;
+    padding: 30px;
+    text-align: center;
   }
+
   .hero_title {
-    font-size: 3.5rem;
+    font-size: clamp(3rem, 7vw, 4.5rem);
+  }
+
+  .staff_carousel_container .staff_card {
+    flex: 0 0 320px;
+    min-width: 320px;
   }
 }
 
-@media (max-width: 640px) {
+/* Mobile Devices & Small Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .top_panel_inner {
+    padding-bottom: 60px;
+  }
+
+  .header_nav_bar {
+    padding: 16px 20px;
+  }
+
+  .logo_text {
+    font-size: 1.3rem;
+  }
+
+  .hero_content {
+    padding: 100px 20px 60px;
+  }
+
+  .hero_title {
+    font-size: clamp(2.4rem, 8.5vw, 3.6rem);
+    letter-spacing: 2px;
+  }
+
+  .hero_subtitle {
+    font-size: 1rem;
+    padding: 0 10px;
+    margin-bottom: 30px;
+  }
+
+  .sc_button {
+    padding: 14px 28px;
+    font-size: 1.15rem;
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+
+  .welcome_section, .services_section, .staff_section, .prices_section, .shop_section {
+    padding: 60px 0;
+  }
+
+  .welcome_text_box, .prices_content_box {
+    padding: 35px 22px;
+  }
+
+  .welcome_text_box h2, .prices_content_box h2 {
+    font-size: 2.3rem;
+  }
+
+  .section_title {
+    font-size: clamp(2.2rem, 7.5vw, 3.2rem);
+  }
+
+  .section_subtitle {
+    font-size: 0.95rem;
+    padding: 0 10px;
+  }
+
+  .carousel_arrow_btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .carousel_arrow_btn.left { left: 0px; }
+  .carousel_arrow_btn.right { right: 0px; }
+
+  .staff_carousel_container {
+    padding: 10px 0 20px;
+    gap: 20px;
+  }
+
+  .staff_carousel_container .staff_card {
+    flex: 0 0 290px;
+    min-width: 290px;
+  }
+
+  .staff_avatar_wrap {
+    height: 320px;
+  }
+
+  /* Modal Mobile Responsiveness */
+  .modal_overlay {
+    padding: 12px;
+  }
+
+  .modal_content {
+    max-width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 24px 18px !important;
+  }
+
+  .form_grid_2col {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* Extra Small Smartphones (max-width: 480px) */
+@media (max-width: 480px) {
+  .content_wrap {
+    padding: 0 16px;
+  }
+
+  .header_nav_bar {
+    padding: 12px 14px;
+  }
+
+  .logo_text {
+    font-size: 1.1rem;
+    letter-spacing: 1.5px;
+  }
+
+  .nav_right_actions {
+    gap: 10px;
+  }
+
+  .nav_action_btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .menu_toggle_icon {
+    width: 38px;
+    height: 38px;
+  }
+
   .services_grid, .shop_grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
-  .form_grid_2col {
-    grid-template-columns: 1fr;
+
+  .welcome_image_box, .prices_image_box {
+    min-height: 260px;
   }
-  .hero_title {
-    font-size: 2.8rem;
+
+  .welcome_text_box, .prices_content_box {
+    padding: 28px 16px;
   }
-  .welcome_text_box, .prices_content_box, .appointment_form_container {
-    padding: 30px 20px;
+
+  .prices_table td {
+    padding: 12px 0;
+    font-size: 0.88rem;
+  }
+
+  .side_drawer {
+    width: 88vw;
+    padding: 25px 18px;
+  }
+
+  .cart_item_row {
+    gap: 12px;
+  }
+
+  .cart_item_img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .cart_item_title {
+    font-size: 0.95rem;
   }
 }
 
@@ -1264,5 +1440,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .barber_portrait_card:hover img {
   transform: scale(1.08);
 }
+
 
 
