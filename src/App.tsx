@@ -11,7 +11,6 @@ import { Staff } from './components/Staff';
 import { PriceList } from './components/PriceList';
 import { Shop } from './components/Shop';
 import type { ProductItem } from './components/Shop';
-import { AppointmentForm } from './components/AppointmentForm';
 import { CartDrawer } from './components/CartDrawer';
 import type { CartItem } from './components/CartDrawer';
 import { Footer } from './components/Footer';
@@ -92,10 +91,9 @@ function MainSite() {
       <Welcome onLearnMore={() => scrollToSection('services')} />
       <Services onBookService={handleBookService} />
       <Testimonials />
-      <Staff />
+      <Staff initialService={bookingService} />
       <PriceList onBookClick={() => scrollToSection('appointment')} />
       <Shop onAddToCart={handleAddToCart} />
-      <AppointmentForm initialService={bookingService} />
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
