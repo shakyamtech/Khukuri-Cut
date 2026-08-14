@@ -97,25 +97,22 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
           <div className="separator_line"></div>
         </div>
 
-        {/* Barber Avatar Grid — click to open modal */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '24px', maxWidth: '900px', margin: '0 auto' }}>
+        {/* Barber Cards Grid — click to open modal */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', maxWidth: '1050px', margin: '0 auto' }}>
 
           {/* Any Barber Card */}
-          <div onClick={() => openModal(null)} style={anyCardStyle}>
-            {/* Square avatar with corner accents */}
-            <div style={{ position: 'relative', width: '130px', height: '130px', margin: '0 auto 18px' }}>
-              {/* Corner accent lines */}
-              <span style={topLeftCorner('#d5a353')} />
-              <span style={topRightCorner('#d5a353')} />
-              <span style={bottomLeftCorner('#d5a353')} />
-              <span style={bottomRightCorner('#d5a353')} />
-              <div style={anyAvatarStyle}>✂️</div>
+          <div onClick={() => openModal(null)} style={anyCardStyle} className="barber_portrait_card">
+            <div style={{ position: 'relative', width: '100%', height: '240px', background: 'linear-gradient(135deg, #2b2118, #1a140e)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <div style={{ width: '88px', height: '88px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.8rem', boxShadow: '0 0 30px rgba(213,163,83,0.4)', marginBottom: '10px' }}>✂️</div>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', color: '#d5a353', background: 'rgba(10,8,6,0.75)', border: '1px solid rgba(213,163,83,0.4)', backdropFilter: 'blur(4px)', letterSpacing: '0.8px' }}>
+                🟢 AVAILABLE
+              </span>
             </div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '6px', letterSpacing: '0.5px' }}>Any Barber</div>
-            <div style={{ fontSize: '0.72rem', color: '#d5a353', background: 'rgba(213,163,83,0.15)', border: '1px solid rgba(213,163,83,0.35)', padding: '3px 14px', borderRadius: '20px', fontWeight: 800, letterSpacing: '0.8px' }}>
-              AVAILABLE
+            <div style={{ padding: '18px 16px 20px', textAlign: 'center' }}>
+              <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: '#d5a353', letterSpacing: '1px', lineHeight: 1.1 }}>ANY BARBER</div>
+              <div style={{ fontSize: '0.8rem', color: '#8a7a6a', fontStyle: 'italic', marginTop: '4px', marginBottom: '14px' }}>First available master barber</div>
+              <div style={bookBtnStyle}>BOOK ANY BARBER →</div>
             </div>
-            <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#8a7a6a' }}>Click to Book</div>
           </div>
 
           {/* Individual Barber Cards */}
@@ -123,41 +120,37 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
             const col = statusColor(barber);
             const st = statusText(barber);
             return (
-              <div key={barber.id} onClick={() => openModal(barber)} style={{ ...barberCardStyle, boxShadow: `0 0 0 1px ${col}30, 0 8px 32px rgba(0,0,0,0.5)` }}>
-                {/* Square avatar wrapper with corner accents */}
-                <div style={{ position: 'relative', width: '130px', height: '130px', margin: '0 auto 18px' }}>
-                  {/* Glow layer behind image */}
-                  <div style={{ position: 'absolute', inset: 4, borderRadius: '12px', boxShadow: `0 0 28px ${col}50`, background: `${col}08` }} />
-                  {/* Corner accent lines */}
-                  <span style={topLeftCorner(col)} />
-                  <span style={topRightCorner(col)} />
-                  <span style={bottomLeftCorner(col)} />
-                  <span style={bottomRightCorner(col)} />
-                  {/* Main image — square with rounded corners */}
+              <div key={barber.id} onClick={() => openModal(barber)} style={{ ...barberCardStyle, borderColor: `${col}66` }} className="barber_portrait_card">
+                {/* Large Portrait Image Header */}
+                <div style={{ position: 'relative', width: '100%', height: '240px', overflow: 'hidden', background: '#120e0c' }}>
                   <img
                     src={barber.image}
                     alt={barber.name}
-                    style={{ position: 'absolute', inset: 6, width: 'calc(100% - 12px)', height: 'calc(100% - 12px)', borderRadius: '10px', objectFit: 'cover', objectPosition: 'top' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.5s ease' }}
                   />
-                  {/* Status badge — bottom right */}
+                  {/* Subtle Gradient Overlay at bottom of photo for text contrast */}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(18,14,12,0.85) 0%, rgba(18,14,12,0) 40%)' }} />
+                  
+                  {/* Floating Status Pill on Top-Right */}
                   <span style={{
-                    position: 'absolute', bottom: 6, right: 6,
-                    width: 14, height: 14, borderRadius: '50%',
-                    background: col, border: '2.5px solid #191514',
-                    boxShadow: `0 0 10px ${col}`,
-                  }} />
+                    position: 'absolute', top: '12px', right: '12px',
+                    fontSize: '0.68rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px',
+                    color: col, background: 'rgba(10,8,6,0.82)', border: `1.5px solid ${col}`,
+                    backdropFilter: 'blur(6px)', boxShadow: `0 0 14px ${col}44`, letterSpacing: '0.8px',
+                    display: 'flex', alignItems: 'center', gap: '6px'
+                  }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: col, boxShadow: `0 0 8px ${col}` }} />
+                    {st}
+                  </span>
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '3px', letterSpacing: '0.5px' }}>{barber.name.split(' ')[0]}</div>
-                <div style={{ fontSize: '0.78rem', color: '#8a7a6a', marginBottom: '12px', fontStyle: 'italic' }}>{barber.role}</div>
-                <div style={{
-                  display: 'inline-block',
-                  fontSize: '0.68rem', fontWeight: 800, padding: '3px 14px', borderRadius: '20px',
-                  color: col, background: `${col}18`, border: `1px solid ${col}45`, letterSpacing: '0.8px',
-                }}>
-                  {st}
-                </div>
-                <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#d5a353', fontWeight: 600 }}>
-                  Tap to Book →
+
+                {/* Barber Info Body */}
+                <div style={{ padding: '18px 16px 20px', textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.65rem', fontWeight: 700, color: '#f9f6f2', letterSpacing: '1px', lineHeight: 1.1 }}>{barber.name.toUpperCase()}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#a89a8a', fontStyle: 'italic', marginTop: '3px', marginBottom: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{barber.role}</div>
+                  <div style={{ ...bookBtnStyle, borderColor: `${col}55`, color: col }}>
+                    BOOK SESSION →
+                  </div>
                 </div>
               </div>
             );
@@ -190,15 +183,15 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                   <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                     {selectedBarber ? (
                       <>
-                        <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 12px' }}>
+                        <div style={{ position: 'relative', width: '84px', height: '84px', margin: '0 auto 12px' }}>
                           <img
                             src={selectedBarber.image}
                             alt={selectedBarber.name}
-                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${statusColor(selectedBarber)}`, boxShadow: `0 0 24px ${statusColor(selectedBarber)}55` }}
+                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', objectPosition: 'top center', border: `3px solid ${statusColor(selectedBarber)}`, boxShadow: `0 0 24px ${statusColor(selectedBarber)}55` }}
                           />
                           <span style={{ position: 'absolute', bottom: 2, right: 2, width: 14, height: 14, borderRadius: '50%', background: statusColor(selectedBarber), border: '2.5px solid #161210' }} />
                         </div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>{selectedBarber.name}</h3>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.1rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>{selectedBarber.name}</h3>
                         <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.85rem', color: '#a89a8a', marginBottom: '8px' }}>{selectedBarber.role}</p>
                         <span style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, padding: '3px 12px', borderRadius: '20px', color: statusColor(selectedBarber), background: `${statusColor(selectedBarber)}18`, border: `1px solid ${statusColor(selectedBarber)}40`, letterSpacing: '0.5px' }}>
                           {statusText(selectedBarber)}
@@ -207,7 +200,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                     ) : (
                       <>
                         <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.8rem', boxShadow: '0 0 24px rgba(213,163,83,0.4)' }}>✂️</div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>Any Master Barber</h3>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.1rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>Any Master Barber</h3>
                         <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.85rem', color: '#a89a8a' }}>We'll assign the best available barber for you</p>
                       </>
                     )}
@@ -351,72 +344,30 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
 
 /* ======= Styles ======= */
 const barberCardStyle: React.CSSProperties = {
-  background: 'linear-gradient(145deg, rgba(28,22,18,0.97), rgba(20,16,13,0.99))',
-  border: '1px solid rgba(255,255,255,0.06)',
+  background: 'linear-gradient(180deg, rgba(26,20,16,0.98), rgba(18,14,11,0.99))',
+  border: '2px solid rgba(213,163,83,0.25)',
   borderRadius: '16px',
-  padding: '28px 20px 22px',
-  textAlign: 'center',
+  overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
-  backdropFilter: 'blur(4px)',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  boxShadow: '0 12px 35px rgba(0,0,0,0.5)',
 };
 
 const anyCardStyle: React.CSSProperties = {
   ...barberCardStyle,
-  border: '1px solid rgba(213,163,83,0.25)',
-  boxShadow: '0 0 0 1px rgba(213,163,83,0.15), 0 8px 32px rgba(0,0,0,0.5)',
-  background: 'linear-gradient(145deg, rgba(35,28,18,0.97), rgba(28,22,14,0.99))',
+  borderColor: 'rgba(213,163,83,0.5)',
+  boxShadow: '0 12px 35px rgba(213,163,83,0.15)',
 };
 
-const anyAvatarStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  borderRadius: '10px',
-  background: 'linear-gradient(135deg, #d5a353, #b8863b)',
-  color: '#191514',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '3rem',
-  boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.15)',
+const bookBtnStyle: React.CSSProperties = {
+  display: 'inline-block',
+  fontSize: '0.78rem',
+  fontWeight: 800,
+  letterSpacing: '1px',
+  color: '#d5a353',
+  background: 'rgba(213,163,83,0.08)',
+  border: '1px solid rgba(213,163,83,0.3)',
+  borderRadius: '20px',
+  padding: '8px 18px',
+  transition: 'all 0.25s ease',
 };
-
-/* Corner accent helpers */
-const cornerBase: React.CSSProperties = {
-  position: 'absolute',
-  width: '18px',
-  height: '18px',
-  zIndex: 2,
-};
-
-const topLeftCorner = (col: string): React.CSSProperties => ({
-  ...cornerBase,
-  top: 0, left: 0,
-  borderTop: `2.5px solid ${col}`,
-  borderLeft: `2.5px solid ${col}`,
-  borderRadius: '4px 0 0 0',
-});
-
-const topRightCorner = (col: string): React.CSSProperties => ({
-  ...cornerBase,
-  top: 0, right: 0,
-  borderTop: `2.5px solid ${col}`,
-  borderRight: `2.5px solid ${col}`,
-  borderRadius: '0 4px 0 0',
-});
-
-const bottomLeftCorner = (col: string): React.CSSProperties => ({
-  ...cornerBase,
-  bottom: 0, left: 0,
-  borderBottom: `2.5px solid ${col}`,
-  borderLeft: `2.5px solid ${col}`,
-  borderRadius: '0 0 0 4px',
-});
-
-const bottomRightCorner = (col: string): React.CSSProperties => ({
-  ...cornerBase,
-  bottom: 0, right: 0,
-  borderBottom: `2.5px solid ${col}`,
-  borderRight: `2.5px solid ${col}`,
-  borderRadius: '0 0 4px 0',
-});
