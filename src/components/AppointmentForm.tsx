@@ -98,16 +98,24 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
         </div>
 
         {/* Barber Avatar Grid — click to open modal */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '24px', maxWidth: '900px', margin: '0 auto' }}>
 
           {/* Any Barber Card */}
           <div onClick={() => openModal(null)} style={anyCardStyle}>
-            <div style={anyAvatarStyle}>✂️</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '6px' }}>Any Barber</div>
-            <div style={{ fontSize: '0.72rem', color: '#d5a353', background: 'rgba(213,163,83,0.15)', border: '1px solid rgba(213,163,83,0.35)', padding: '3px 12px', borderRadius: '20px', fontWeight: 800, letterSpacing: '0.5px' }}>
+            {/* Square avatar with corner accents */}
+            <div style={{ position: 'relative', width: '130px', height: '130px', margin: '0 auto 18px' }}>
+              {/* Corner accent lines */}
+              <span style={topLeftCorner('#d5a353')} />
+              <span style={topRightCorner('#d5a353')} />
+              <span style={bottomLeftCorner('#d5a353')} />
+              <span style={bottomRightCorner('#d5a353')} />
+              <div style={anyAvatarStyle}>✂️</div>
+            </div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '6px', letterSpacing: '0.5px' }}>Any Barber</div>
+            <div style={{ fontSize: '0.72rem', color: '#d5a353', background: 'rgba(213,163,83,0.15)', border: '1px solid rgba(213,163,83,0.35)', padding: '3px 14px', borderRadius: '20px', fontWeight: 800, letterSpacing: '0.8px' }}>
               AVAILABLE
             </div>
-            <div style={{ marginTop: '12px', fontSize: '0.78rem', color: '#8a7a6a' }}>Click to Book</div>
+            <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#8a7a6a' }}>Click to Book</div>
           </div>
 
           {/* Individual Barber Cards */}
@@ -115,32 +123,40 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
             const col = statusColor(barber);
             const st = statusText(barber);
             return (
-              <div key={barber.id} onClick={() => openModal(barber)} style={{ ...barberCardStyle, borderColor: `${col}55` }}>
-                {/* Glowing border ring on top */}
-                <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 14px' }}>
+              <div key={barber.id} onClick={() => openModal(barber)} style={{ ...barberCardStyle, boxShadow: `0 0 0 1px ${col}30, 0 8px 32px rgba(0,0,0,0.5)` }}>
+                {/* Square avatar wrapper with corner accents */}
+                <div style={{ position: 'relative', width: '130px', height: '130px', margin: '0 auto 18px' }}>
+                  {/* Glow layer behind image */}
+                  <div style={{ position: 'absolute', inset: 4, borderRadius: '12px', boxShadow: `0 0 28px ${col}50`, background: `${col}08` }} />
+                  {/* Corner accent lines */}
+                  <span style={topLeftCorner(col)} />
+                  <span style={topRightCorner(col)} />
+                  <span style={bottomLeftCorner(col)} />
+                  <span style={bottomRightCorner(col)} />
+                  {/* Main image — square with rounded corners */}
                   <img
                     src={barber.image}
                     alt={barber.name}
-                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${col}`, boxShadow: `0 0 18px ${col}55` }}
+                    style={{ position: 'absolute', inset: 6, width: 'calc(100% - 12px)', height: 'calc(100% - 12px)', borderRadius: '10px', objectFit: 'cover', objectPosition: 'top' }}
                   />
-                  {/* Status dot */}
+                  {/* Status badge — bottom right */}
                   <span style={{
-                    position: 'absolute', bottom: 2, right: 2,
+                    position: 'absolute', bottom: 6, right: 6,
                     width: 14, height: 14, borderRadius: '50%',
                     background: col, border: '2.5px solid #191514',
-                    boxShadow: barber.status === 'available' ? `0 0 10px ${col}` : 'none',
+                    boxShadow: `0 0 10px ${col}`,
                   }} />
                 </div>
-                <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '4px' }}>{barber.name.split(' ')[0]}</div>
-                <div style={{ fontSize: '0.75rem', color: '#8a7a6a', marginBottom: '10px', fontStyle: 'italic' }}>{barber.role}</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f9f6f2', marginBottom: '3px', letterSpacing: '0.5px' }}>{barber.name.split(' ')[0]}</div>
+                <div style={{ fontSize: '0.78rem', color: '#8a7a6a', marginBottom: '12px', fontStyle: 'italic' }}>{barber.role}</div>
                 <div style={{
                   display: 'inline-block',
-                  fontSize: '0.68rem', fontWeight: 800, padding: '3px 12px', borderRadius: '20px',
-                  color: col, background: `${col}18`, border: `1px solid ${col}40`, letterSpacing: '0.5px',
+                  fontSize: '0.68rem', fontWeight: 800, padding: '3px 14px', borderRadius: '20px',
+                  color: col, background: `${col}18`, border: `1px solid ${col}45`, letterSpacing: '0.8px',
                 }}>
                   {st}
                 </div>
-                <div style={{ marginTop: '12px', fontSize: '0.78rem', color: '#d5a353', fontWeight: 600 }}>
+                <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#d5a353', fontWeight: 600 }}>
                   Tap to Book →
                 </div>
               </div>
@@ -335,10 +351,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
 
 /* ======= Styles ======= */
 const barberCardStyle: React.CSSProperties = {
-  background: 'linear-gradient(145deg, rgba(28,22,18,0.95), rgba(22,18,15,0.98))',
-  border: '1px solid rgba(255,255,255,0.08)',
-  borderRadius: '18px',
-  padding: '24px 16px 20px',
+  background: 'linear-gradient(145deg, rgba(28,22,18,0.97), rgba(20,16,13,0.99))',
+  border: '1px solid rgba(255,255,255,0.06)',
+  borderRadius: '16px',
+  padding: '28px 20px 22px',
   textAlign: 'center',
   cursor: 'pointer',
   transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -347,20 +363,60 @@ const barberCardStyle: React.CSSProperties = {
 
 const anyCardStyle: React.CSSProperties = {
   ...barberCardStyle,
-  border: '1px solid rgba(213,163,83,0.3)',
-  background: 'linear-gradient(145deg, rgba(35,28,18,0.95), rgba(28,22,14,0.98))',
+  border: '1px solid rgba(213,163,83,0.25)',
+  boxShadow: '0 0 0 1px rgba(213,163,83,0.15), 0 8px 32px rgba(0,0,0,0.5)',
+  background: 'linear-gradient(145deg, rgba(35,28,18,0.97), rgba(28,22,14,0.99))',
 };
 
 const anyAvatarStyle: React.CSSProperties = {
-  width: '80px',
-  height: '80px',
-  borderRadius: '50%',
+  width: '100%',
+  height: '100%',
+  borderRadius: '10px',
   background: 'linear-gradient(135deg, #d5a353, #b8863b)',
   color: '#191514',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  margin: '0 auto 14px',
-  fontSize: '2rem',
-  boxShadow: '0 0 24px rgba(213,163,83,0.4)',
+  fontSize: '3rem',
+  boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.15)',
 };
+
+/* Corner accent helpers */
+const cornerBase: React.CSSProperties = {
+  position: 'absolute',
+  width: '18px',
+  height: '18px',
+  zIndex: 2,
+};
+
+const topLeftCorner = (col: string): React.CSSProperties => ({
+  ...cornerBase,
+  top: 0, left: 0,
+  borderTop: `2.5px solid ${col}`,
+  borderLeft: `2.5px solid ${col}`,
+  borderRadius: '4px 0 0 0',
+});
+
+const topRightCorner = (col: string): React.CSSProperties => ({
+  ...cornerBase,
+  top: 0, right: 0,
+  borderTop: `2.5px solid ${col}`,
+  borderRight: `2.5px solid ${col}`,
+  borderRadius: '0 4px 0 0',
+});
+
+const bottomLeftCorner = (col: string): React.CSSProperties => ({
+  ...cornerBase,
+  bottom: 0, left: 0,
+  borderBottom: `2.5px solid ${col}`,
+  borderLeft: `2.5px solid ${col}`,
+  borderRadius: '0 0 0 4px',
+});
+
+const bottomRightCorner = (col: string): React.CSSProperties => ({
+  ...cornerBase,
+  bottom: 0, right: 0,
+  borderBottom: `2.5px solid ${col}`,
+  borderRight: `2.5px solid ${col}`,
+  borderRadius: '0 0 4px 0',
+});
