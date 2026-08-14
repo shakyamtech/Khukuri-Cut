@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getStoredStaff } from '../../utils/staffStorage';
 import {
   CalendarCheck,
   TrendingUp,
@@ -200,6 +201,59 @@ export const AdminDashboard: React.FC = () => {
               <ShoppingBag size={14} color="#6a5a4a" />
               <span style={{ color: '#6a5a4a', fontSize: '0.75rem' }}>Services: {Object.keys(serviceCount).length}</span>
             </div>
+          </div>
+        </div>
+
+        {/* Live Staff Availability Panel */}
+        <div style={panelStyle}>
+          <div style={panelHeader}>
+            <Users size={16} color="#d5a353" />
+            <span style={panelTitle}>Live Staff Status</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
+            {getStoredStaff().map((staff) => (
+              <div
+                key={staff.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'rgba(255,255,255,0.03)',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                }}
+              >
+                <div>
+                  <div style={{ color: '#f9f6f2', fontSize: '0.88rem', fontWeight: 600 }}>{staff.name}</div>
+                  <div style={{ color: '#8a7a6a', fontSize: '0.72rem' }}>{staff.role}</div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    padding: '3px 8px',
+                    borderRadius: '12px',
+                    color: staff.status === 'available' ? '#22c55e' : staff.status === 'busy' ? '#ef4444' : '#eab308',
+                    background:
+                      staff.status === 'available'
+                        ? 'rgba(34,197,94,0.12)'
+                        : staff.status === 'busy'
+                        ? 'rgba(239,68,68,0.12)'
+                        : 'rgba(234,179,8,0.12)',
+                    border: `1px solid ${
+                      staff.status === 'available'
+                        ? 'rgba(34,197,94,0.3)'
+                        : staff.status === 'busy'
+                        ? 'rgba(239,68,68,0.3)'
+                        : 'rgba(234,179,8,0.3)'
+                    }`,
+                  }}
+                >
+                  {staff.status === 'available' ? '🟢 Available' : staff.status === 'busy' ? '🔴 In Session' : '🟡 On Break'}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

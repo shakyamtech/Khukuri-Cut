@@ -1,22 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { CheckCircle2 } from 'lucide-react';
+import { getStoredStaff, STAFF_UPDATED_EVENT } from '../utils/staffStorage';
+import type { StaffMember } from '../utils/staffStorage';
 
 interface AppointmentFormProps {
   initialService?: string;
 }
 
 export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService = '' }) => {
+  const [staffList, setStaffList] = useState<StaffMember[]>(getStoredStaff);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     date: '',
     time: '12:00 PM',
+    barber: 'Any Master Barber',
     service: initialService || 'HAIRCUTTING',
     notes: '',
     accepted: false,
   });
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setStaffList(getStoredStaff());
+    };
+    window.addEventListener(STAFF_UPDATED_EVENT, handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener(STAFF_UPDATED_EVENT, handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -85,6 +101,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                     phone: '',
                     date: '',
                     time: '12:00 PM',
+                    barber: 'Any Master Barber',
                     service: 'HAIRCUTTING',
                     notes: '',
                     accepted: false,
@@ -158,6 +175,23 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                 <div>
                   <select
                     className="form_select"
+                    value={formData.barber}
+                    onChange={(e) => setFormData({ ...formData, barber: e.target.value })}
+                  >
+                    <option value="Any Master Barber">Any Available Master Barber</option>
+                    {staffList.map((barber) => (
+                      <option key={barber.id} value={barber.name}>
+                        {barber.name} ({barber.status === 'available' ? '🟢 Available Now' : barber.status === 'busy' ? '🔴 In Session' : '🟡 On Break'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form_grid_2col" style={{ marginTop: '20px' }}>
+                <div>
+                  <select
+                    className="form_select"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   >
@@ -169,16 +203,16 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({ initialService
                     <option value="07:00 PM">07:00 PM</option>
                   </select>
                 </div>
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <textarea
-                  className="form_textarea"
-                  rows={4}
-                  placeholder="Special instructions or hair style preferences..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                ></textarea>
+                <div>
+                  <textarea
+                    className="form_textarea"
+                    rows={1}
+                    style={{ height: '52px', padding: '12px 18px', resize: 'none' }}
+                    placeholder="Special instructions or hair style preferences (Optional)..."
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  ></textarea>
+                </div>
               </div>
 
               <div className="checkbox_row">

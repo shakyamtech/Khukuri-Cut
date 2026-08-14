@@ -1,27 +1,11 @@
-import React, { useState } from 'react';
-import { Star, AtSign, Phone, Edit3, Save, X } from 'lucide-react';
-
-interface StaffMember {
-  id: string;
-  name: string;
-  role: string;
-  experience: string;
-  specialty: string;
-  phone: string;
-  instagram: string;
-  rating: number;
-  totalCuts: number;
-  available: boolean;
-  initials: string;
-  color: string;
-}
-
-const STAFF_DATA: StaffMember[] = [
-  { id: 'st1', name: 'Rajan Tamang', role: 'Head Barber', experience: '12 years', specialty: 'Classic Fades & Pompadour', phone: '9841111001', instagram: '@rajan_cuts', rating: 4.9, totalCuts: 3200, available: true, initials: 'RT', color: '#d5a353' },
-  { id: 'st2', name: 'Bikash Gurung', role: 'Senior Barber', experience: '8 years', specialty: 'Hot Towel Shaving', phone: '9841111002', instagram: '@bikash_barber', rating: 4.8, totalCuts: 2100, available: true, initials: 'BG', color: '#3b82f6' },
-  { id: 'st3', name: 'Dipak Magar', role: 'Barber & Tattoo Artist', experience: '6 years', specialty: 'Custom Tattoo & Styling', phone: '9841111003', instagram: '@dipak_ink', rating: 4.9, totalCuts: 1500, available: true, initials: 'DM', color: '#a855f7' },
-  { id: 'st4', name: 'Sushil Rai', role: 'Junior Barber', experience: '3 years', specialty: 'Beard Sculpting', phone: '9841111004', instagram: '@sushil_barber', rating: 4.7, totalCuts: 850, available: false, initials: 'SR', color: '#22c55e' },
-];
+import React, { useState, useEffect } from 'react';
+import { Star, AtSign, Phone, Edit3, Save, X, Activity } from 'lucide-react';
+import {
+  getStoredStaff,
+  saveStoredStaff,
+  STAFF_UPDATED_EVENT,
+} from '../../utils/staffStorage';
+import type { StaffMember, StaffStatus } from '../../utils/staffStorage';
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
   <div style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
@@ -38,10 +22,22 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 export const AdminStaff: React.FC = () => {
-  const [staff, setStaff] = useState<StaffMember[]>(STAFF_DATA);
+  const [staff, setStaff] = useState<StaffMember[]>(getStoredStaff);
   const [editing, setEditing] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<StaffMember>>({});
   const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setStaff(getStoredStaff());
+    };
+    window.addEventListener(STAFF_UPDATED_EVENT, handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener(STAFF_UPDATED_EVENT, handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -54,46 +50,65 @@ export const AdminStaff: React.FC = () => {
   };
 
   const saveEdit = (id: string) => {
-    setStaff((prev) => prev.map((s) => (s.id === id ? { ...s, ...editData } : s)));
+    const updated = staff.map((s) => (s.id === id ? ({ ...s, ...editData } as StaffMember) : s));
+    setStaff(updated);
+    saveStoredStaff(updated);
     setEditing(null);
-    showToast('Staff info updated!');
+    showToast('Staff info updated & synced live!');
   };
 
-  const toggleAvail = (id: string) => {
-    setStaff((prev) => prev.map((s) => (s.id === id ? { ...s, available: !s.available } : s)));
+  const setBarberStatus = (id: string, status: StaffStatus) => {
+    const defaultNotes: Record<StaffStatus, string> = {
+      available: 'Ready for Walk-in',
+      busy: 'In Session',
+      off: 'On Break',
+    };
+    const updated = staff.map((s) =>
+      s.id === id ? { ...s, status, statusNote: s.statusNote || defaultNotes[status] } : s
+    );
+    setStaff(updated);
+    saveStoredStaff(updated);
+    showToast(`Status updated to ${status.toUpperCase()} for ${staff.find((s) => s.id === id)?.name}!`);
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {toast && <div style={toastStyle}><Save size={14} />{toast}</div>}
+      {toast && (
+        <div style={toastStyle}>
+          <Activity size={14} />
+          {toast}
+        </div>
+      )}
 
       {/* Summary bar */}
       <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
         {[
           { label: 'Total Staff', val: staff.length, color: '#d5a353' },
-          { label: 'Available Today', val: staff.filter((s) => s.available).length, color: '#22c55e' },
-          { label: 'On Leave', val: staff.filter((s) => !s.available).length, color: '#ef4444' },
-          { label: 'Total Cuts Done', val: staff.reduce((sum, s) => sum + s.totalCuts, 0).toLocaleString(), color: '#3b82f6' },
+          { label: 'Available Now 🟢', val: staff.filter((s) => s.status === 'available').length, color: '#22c55e' },
+          { label: 'In Session 🔴', val: staff.filter((s) => s.status === 'busy').length, color: '#ef4444' },
+          { label: 'On Break 🟡', val: staff.filter((s) => s.status === 'off').length, color: '#eab308' },
         ].map(({ label, val, color }) => (
           <div key={label} style={summaryCard}>
-            <div style={{ color: '#5a4a3a', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>{label}</div>
+            <div style={{ color: '#8a7a6a', fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
+              {label}
+            </div>
             <div style={{ color, fontSize: '1.8rem', fontWeight: 800 }}>{val}</div>
           </div>
         ))}
       </div>
 
       {/* Staff Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
         {staff.map((member) => {
           const isEditing = editing === member.id;
           const data = isEditing ? editData : member;
 
           return (
-            <div key={member.id} style={{ ...staffCard, opacity: member.available ? 1 : 0.65 }}>
+            <div key={member.id} style={staffCard}>
               {/* Avatar + name */}
-              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', marginBottom: '14px' }}>
                 <div style={{ ...avatar, background: `linear-gradient(135deg, ${member.color}, ${member.color}aa)` }}>
-                  {member.initials}
+                  {member.initials || member.name.split(' ').map((n) => n[0]).join('')}
                 </div>
                 <div style={{ flex: 1 }}>
                   {isEditing ? (
@@ -103,7 +118,7 @@ export const AdminStaff: React.FC = () => {
                       onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                     />
                   ) : (
-                    <div style={{ color: '#f9f6f2', fontWeight: 700, fontSize: '1rem', marginBottom: 3 }}>{member.name}</div>
+                    <div style={{ color: '#f9f6f2', fontWeight: 700, fontSize: '1.05rem', marginBottom: 3 }}>{member.name}</div>
                   )}
                   {isEditing ? (
                     <input
@@ -113,28 +128,34 @@ export const AdminStaff: React.FC = () => {
                       placeholder="Role"
                     />
                   ) : (
-                    <div style={{ color: member.color, fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.05em' }}>{member.role}</div>
+                    <div style={{ color: member.color, fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em' }}>{member.role}</div>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   {isEditing ? (
                     <>
-                      <button onClick={() => saveEdit(member.id)} style={{ ...iconBtn, color: '#22c55e' }}><Save size={14} /></button>
-                      <button onClick={() => setEditing(null)} style={{ ...iconBtn, color: '#ef4444' }}><X size={14} /></button>
+                      <button onClick={() => saveEdit(member.id)} style={{ ...iconBtn, color: '#22c55e' }}>
+                        <Save size={14} />
+                      </button>
+                      <button onClick={() => setEditing(null)} style={{ ...iconBtn, color: '#ef4444' }}>
+                        <X size={14} />
+                      </button>
                     </>
                   ) : (
-                    <button onClick={() => startEdit(member)} style={iconBtn}><Edit3 size={14} /></button>
+                    <button onClick={() => startEdit(member)} style={iconBtn}>
+                      <Edit3 size={14} />
+                    </button>
                   )}
                 </div>
               </div>
 
               {/* Stats */}
               <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                <StarRating rating={member.rating} />
+                <StarRating rating={member.rating || 4.9} />
                 <span style={{ color: '#4a3a2a' }}>·</span>
-                <span style={{ color: '#6a5a4a', fontSize: '0.78rem' }}>{member.totalCuts.toLocaleString()} cuts</span>
+                <span style={{ color: '#8a7a6a', fontSize: '0.78rem' }}>{(member.totalCuts || 1000).toLocaleString()} cuts</span>
                 <span style={{ color: '#4a3a2a' }}>·</span>
-                <span style={{ color: '#6a5a4a', fontSize: '0.78rem' }}>{member.experience}</span>
+                <span style={{ color: '#8a7a6a', fontSize: '0.78rem' }}>{member.experience}</span>
               </div>
 
               {/* Specialty */}
@@ -146,15 +167,15 @@ export const AdminStaff: React.FC = () => {
                   placeholder="Specialty"
                 />
               ) : (
-                <div style={{ color: '#8a7a6a', fontSize: '0.8rem', marginBottom: '12px' }}>
+                <div style={{ color: '#a89a8a', fontSize: '0.82rem', marginBottom: '12px' }}>
                   🎯 {member.specialty}
                 </div>
               )}
 
               {/* Contact */}
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '16px' }}>
                 <div style={contactPill}>
-                  <Phone size={11} color="#6a5a4a" />
+                  <Phone size={11} color="#8a7a6a" />
                   {isEditing ? (
                     <input
                       style={{ ...editInput, padding: '2px 4px', width: 100, fontSize: '0.72rem' }}
@@ -166,7 +187,7 @@ export const AdminStaff: React.FC = () => {
                   )}
                 </div>
                 <div style={contactPill}>
-                  <AtSign size={11} color="#6a5a4a" />
+                  <AtSign size={11} color="#8a7a6a" />
                   {isEditing ? (
                     <input
                       style={{ ...editInput, padding: '2px 4px', width: 90, fontSize: '0.72rem' }}
@@ -179,31 +200,79 @@ export const AdminStaff: React.FC = () => {
                 </div>
               </div>
 
-              {/* Availability */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  color: member.available ? '#22c55e' : '#ef4444',
-                }}>
-                  {member.available ? '● Available Today' : '○ On Leave'}
-                </span>
-                <button
-                  onClick={() => toggleAvail(member.id)}
-                  style={{
-                    padding: '5px 12px',
-                    borderRadius: '8px',
-                    border: `1px solid ${member.available ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`,
-                    background: `${member.available ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.08)'}`,
-                    color: member.available ? '#ef4444' : '#22c55e',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontFamily: "'Outfit', sans-serif",
-                  }}
-                >
-                  {member.available ? 'Mark Leave' : 'Mark Available'}
-                </button>
+              {/* Status Note input if editing */}
+              {isEditing && (
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ fontSize: '0.72rem', color: '#8a7a6a', display: 'block', marginBottom: '4px' }}>
+                    Status Note (Optional):
+                  </label>
+                  <input
+                    style={editInput}
+                    value={data.statusNote || ''}
+                    onChange={(e) => setEditData({ ...editData, statusNote: e.target.value })}
+                    placeholder="e.g. Back at 3:30 PM"
+                  />
+                </div>
+              )}
+
+              {/* 3-Way Live Status Control */}
+              <div style={{ background: 'rgba(0,0,0,0.25)', padding: '10px 12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontSize: '0.72rem', color: '#8a7a6a', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', fontWeight: 600 }}>
+                  Live Status Control (Syncs to Home Page):
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    onClick={() => setBarberStatus(member.id, 'available')}
+                    style={{
+                      flex: 1,
+                      padding: '6px 4px',
+                      borderRadius: '6px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: member.status === 'available' ? '1px solid #22c55e' : '1px solid rgba(255,255,255,0.08)',
+                      background: member.status === 'available' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.03)',
+                      color: member.status === 'available' ? '#22c55e' : '#8a7a6a',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    🟢 Available
+                  </button>
+                  <button
+                    onClick={() => setBarberStatus(member.id, 'busy')}
+                    style={{
+                      flex: 1,
+                      padding: '6px 4px',
+                      borderRadius: '6px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: member.status === 'busy' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.08)',
+                      background: member.status === 'busy' ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.03)',
+                      color: member.status === 'busy' ? '#ef4444' : '#8a7a6a',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    🔴 In Session
+                  </button>
+                  <button
+                    onClick={() => setBarberStatus(member.id, 'off')}
+                    style={{
+                      flex: 1,
+                      padding: '6px 4px',
+                      borderRadius: '6px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: member.status === 'off' ? '1px solid #eab308' : '1px solid rgba(255,255,255,0.08)',
+                      background: member.status === 'off' ? 'rgba(234,179,8,0.2)' : 'rgba(255,255,255,0.03)',
+                      color: member.status === 'off' ? '#eab308' : '#8a7a6a',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    🟡 On Break
+                  </button>
+                </div>
               </div>
             </div>
           );
