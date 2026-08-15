@@ -259,12 +259,10 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
       {modalOpen && (
         <div
           className="modal_overlay"
-          onClick={closeModal}
           style={{ position: 'fixed', inset: 0, background: 'rgba(10,8,6,0.88)', backdropFilter: 'blur(8px)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', overflowY: 'auto' }}
         >
           <div
             className="modal_content"
-            onClick={(e) => e.stopPropagation()}
             style={{ background: 'linear-gradient(145deg, #1c1612, #161210)', border: '1px solid rgba(213,163,83,0.35)', borderRadius: '20px', width: '100%', maxWidth: '560px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 30px 80px rgba(0,0,0,0.9)', animation: 'fadeSlideUp 0.3s ease', padding: 0 }}
           >
             {/* Top Gold Accent Strip */}
