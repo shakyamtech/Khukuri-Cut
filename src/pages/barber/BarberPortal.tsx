@@ -631,36 +631,92 @@ export const BarberPortal: React.FC = () => {
           {/* MAIN CONTENT AREA */}
           <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, background: '#0f0d0c' }}>
             {/* Top Bar Header */}
-            <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', background: 'rgba(20,16,14,0.95)', borderBottom: '1px solid rgba(213,163,83,0.15)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 5 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <button
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  style={{ background: 'rgba(213,163,83,0.08)', border: '1px solid rgba(213,163,83,0.2)', borderRadius: '8px', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d5a353', cursor: 'pointer' }}
-                >
-                  {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
-                </button>
-                <div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f9f6f2', letterSpacing: '0.5px' }}>
-                    {activeNavTab === 'dashboard' ? 'BARBER DASHBOARD' : activeNavTab === 'queue' ? 'MY CLIENT QUEUE' : activeNavTab === 'earnings' ? 'DAILY EARNINGS & STATS' : 'MY PROFILE & SETTINGS'}
+            <header
+              style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'stretch' : 'center',
+                justifyContent: 'space-between',
+                padding: isMobile ? '12px 14px' : '16px 24px',
+                gap: isMobile ? '12px' : '16px',
+                background: 'rgba(20,16,14,0.98)',
+                borderBottom: '1px solid rgba(213,163,83,0.15)',
+                backdropFilter: 'blur(10px)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 5,
+              }}
+            >
+              {/* Top Row on Mobile / Main Header Left */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: isMobile ? '100%' : 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <button
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    style={{
+                      background: 'rgba(213,163,83,0.12)',
+                      border: '1px solid rgba(213,163,83,0.3)',
+                      borderRadius: '8px',
+                      width: 38,
+                      height: 38,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#d5a353',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                  </button>
+
+                  <div>
+                    <div style={{ fontSize: isMobile ? '1.05rem' : '1.25rem', fontWeight: 800, color: '#f9f6f2', letterSpacing: '0.5px' }}>
+                      {activeNavTab === 'dashboard' ? 'BARBER DASHBOARD' : activeNavTab === 'queue' ? 'MY CLIENT QUEUE' : activeNavTab === 'earnings' ? 'DAILY EARNINGS' : 'MY PROFILE'}
+                    </div>
+                    {!isMobile && (
+                      <div style={{ fontSize: '0.75rem', color: '#8a7a6a' }}>Welcome, {activeTabBarber.name} · Khukuri Cut Barbershop</div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#8a7a6a' }}>Welcome, {activeTabBarber.name} · Khukuri Cut Barbershop</div>
                 </div>
+
+                {/* Quick Lock & Sound buttons on Mobile top right */}
+                {isMobile && (
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      onClick={() => playSweetDingSound()}
+                      style={{ background: 'rgba(213,163,83,0.1)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '8px', color: '#d5a353', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 600 }}
+                      title="Test Sound"
+                    >
+                      <Volume2 size={15} />
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', color: '#ef4444', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 700 }}
+                      title="Lock Shift"
+                    >
+                      <LogOut size={15} />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* 1-Tap Live Availability Pills Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ display: 'flex', background: 'rgba(0,0,0,0.4)', borderRadius: '24px', padding: '4px', border: '1px solid rgba(213,163,83,0.2)' }}>
+              {/* 1-Tap Live Availability Status Control Row */}
+              <div style={{ display: 'flex', alignItems: 'center', width: isMobile ? '100%' : 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <div style={{ display: 'flex', background: 'rgba(0,0,0,0.5)', borderRadius: '24px', padding: '4px', border: '1px solid rgba(213,163,83,0.25)', width: '100%', justifyContent: 'space-around', gap: '4px' }}>
                   <button
                     onClick={() => handleStatusChange('available')}
                     style={{
-                      padding: '6px 14px',
+                      flex: 1,
+                      padding: '6px 10px',
                       borderRadius: '20px',
                       border: 'none',
                       background: activeTabBarber.status === 'available' ? '#22c55e' : 'transparent',
                       color: activeTabBarber.status === 'available' ? '#120e0d' : '#22c55e',
                       fontWeight: 800,
-                      fontSize: '0.78rem',
+                      fontSize: '0.76rem',
                       cursor: 'pointer',
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     🟢 Available
@@ -669,14 +725,17 @@ export const BarberPortal: React.FC = () => {
                   <button
                     onClick={() => handleStatusChange('busy')}
                     style={{
-                      padding: '6px 14px',
+                      flex: 1,
+                      padding: '6px 10px',
                       borderRadius: '20px',
                       border: 'none',
                       background: activeTabBarber.status === 'busy' ? '#ef4444' : 'transparent',
                       color: activeTabBarber.status === 'busy' ? '#ffffff' : '#ef4444',
                       fontWeight: 800,
-                      fontSize: '0.78rem',
+                      fontSize: '0.76rem',
                       cursor: 'pointer',
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     🔴 In Session
@@ -685,29 +744,33 @@ export const BarberPortal: React.FC = () => {
                   <button
                     onClick={() => handleStatusChange('off')}
                     style={{
-                      padding: '6px 14px',
+                      flex: 1,
+                      padding: '6px 10px',
                       borderRadius: '20px',
                       border: 'none',
                       background: activeTabBarber.status === 'off' ? '#eab308' : 'transparent',
                       color: activeTabBarber.status === 'off' ? '#120e0d' : '#eab308',
                       fontWeight: 800,
-                      fontSize: '0.78rem',
+                      fontSize: '0.76rem',
                       cursor: 'pointer',
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     🟡 On Break
                   </button>
                 </div>
 
-                {/* Sound Test Button */}
-                <button
-                  onClick={() => playSweetDingSound()}
-                  style={{ background: 'rgba(213,163,83,0.08)', border: '1px solid rgba(213,163,83,0.2)', borderRadius: '10px', color: '#d5a353', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
-                  title="Test Chime Sound"
-                >
-                  <Volume2 size={15} />
-                  <span>Sound Bell</span>
-                </button>
+                {!isMobile && (
+                  <button
+                    onClick={() => playSweetDingSound()}
+                    style={{ marginLeft: '12px', background: 'rgba(213,163,83,0.08)', border: '1px solid rgba(213,163,83,0.2)', borderRadius: '10px', color: '#d5a353', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, flexShrink: 0 }}
+                    title="Test Chime Sound"
+                  >
+                    <Volume2 size={15} />
+                    <span>Sound Bell</span>
+                  </button>
+                )}
               </div>
             </header>
 
@@ -907,12 +970,16 @@ export const BarberPortal: React.FC = () => {
               {/* TAB 4: MY PROFILE & SETTINGS */}
               {activeNavTab === 'profile' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', animation: 'fadeSlideUp 0.3s ease' }}>
-                  <div style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '18px', padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <img src={activeTabBarber.image} alt={activeTabBarber.name} style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top center', border: '3px solid #d5a353', boxShadow: '0 0 20px rgba(213,163,83,0.4)' }} />
-                    <div>
-                      <div style={{ color: '#f9f6f2', fontSize: '1.5rem', fontWeight: 800 }}>{activeTabBarber.name}</div>
-                      <div style={{ color: '#d5a353', fontSize: '0.9rem', fontWeight: 700 }}>{activeTabBarber.role}</div>
-                      <div style={{ color: '#a89a8a', fontSize: '0.82rem', marginTop: '4px' }}>📧 Gmail: {activeTabBarber.email} · 📞 Phone: {activeTabBarber.phone}</div>
+                  <div style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '18px', padding: '24px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left', gap: '20px' }}>
+                    <img src={activeTabBarber.image} alt={activeTabBarber.name} style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top center', border: '3px solid #d5a353', boxShadow: '0 0 20px rgba(213,163,83,0.4)', flexShrink: 0 }} />
+                    <div style={{ overflow: 'hidden', width: '100%' }}>
+                      <div style={{ color: '#f9f6f2', fontSize: '1.4rem', fontWeight: 800 }}>{activeTabBarber.name}</div>
+                      <div style={{ color: '#d5a353', fontSize: '0.9rem', fontWeight: 700, marginTop: '2px' }}>{activeTabBarber.role}</div>
+                      <div style={{ color: '#a89a8a', fontSize: '0.82rem', marginTop: '10px', wordBreak: 'break-word', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div>📧 Gmail: <span style={{ color: '#ffffff', fontWeight: 600 }}>{activeTabBarber.email}</span></div>
+                        <div>📞 Phone: <span style={{ color: '#ffffff', fontWeight: 600 }}>{activeTabBarber.phone}</span></div>
+                        <div>⭐ Experience: <span style={{ color: '#d5a353', fontWeight: 600 }}>{activeTabBarber.experience}</span></div>
+                      </div>
                     </div>
                   </div>
                 </div>
