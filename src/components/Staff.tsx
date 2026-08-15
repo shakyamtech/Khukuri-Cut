@@ -281,67 +281,67 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
 
               {!isSubmitted ? (
                 <>
-                  {/* Barber Header Info */}
-                  <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+                  {/* Barber Header Info - Compact Horizontal Card */}
+                  <div style={{ marginBottom: '12px' }}>
                     {currentBarber ? (
-                      <>
-                        <div style={{ width: '74px', height: '74px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 8px', border: '3px solid #d5a353', boxShadow: '0 0 20px rgba(213,163,83,0.35)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(213,163,83,0.18)', padding: '10px 14px', borderRadius: '12px' }}>
+                        <div style={{ width: '54px', height: '54px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #d5a353', flexShrink: 0, boxShadow: '0 0 14px rgba(213,163,83,0.3)' }}>
                           <img src={currentBarber.image} alt={currentBarber.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
                         </div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '0px', letterSpacing: '1px', lineHeight: 1 }}>{currentBarber.name}</h3>
-                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '6px' }}>{currentBarber.role}</p>
-                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                          {renderStatusBadge(currentBarber.status, currentBarber.statusNote)}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                            <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.5rem', color: '#d5a353', margin: 0, letterSpacing: '0.8px', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {currentBarber.name}
+                            </h3>
+                            {renderStatusBadge(currentBarber.status)}
+                          </div>
+                          <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.75rem', color: '#a89a8a', margin: '2px 0 3px' }}>{currentBarber.role}</p>
+                          <p style={{ fontSize: '0.72rem', color: '#d8cfc4', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <strong style={{ color: '#d5a353' }}>Specialty:</strong> {currentBarber.specialty}
+                          </p>
                         </div>
-
-                        {/* Bio / Specialty Box */}
-                        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(213,163,83,0.15)', padding: '10px 14px', borderRadius: '10px', textAlign: 'left', marginBottom: '14px', fontSize: '0.82rem' }}>
-                          <p style={{ color: '#d5a353', marginBottom: '3px' }}><strong>Specialty:</strong> {currentBarber.specialty}</p>
-                          <p style={{ color: '#d8cfc4', fontSize: '0.8rem', lineHeight: '1.35' }}>{currentBarber.bio}</p>
-                        </div>
-                      </>
+                      </div>
                     ) : (
-                      <>
-                        <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px', fontSize: '1.9rem', boxShadow: '0 0 24px rgba(213,163,83,0.4)' }}>✂️</div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>ANY MASTER BARBER</h3>
-                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '12px' }}>We will assign the first available master barber upon arrival.</p>
-                      </>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(213,163,83,0.18)', padding: '10px 14px', borderRadius: '12px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>✂️</div>
+                        <div>
+                          <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.4rem', color: '#d5a353', margin: 0, letterSpacing: '0.8px', lineHeight: 1 }}>ANY MASTER BARBER</h3>
+                          <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.75rem', color: '#a89a8a', marginTop: '2px' }}>First available barber will be assigned upon arrival.</p>
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  {/* Preferred Barber Switcher */}
-                  <div style={{ marginBottom: '14px' }}>
-                    <label style={{ display: 'block', fontSize: '0.72rem', color: '#d5a353', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
-                      Change Preferred Barber:
-                    </label>
-                    <select
-                      className="form_select"
-                      value={selectedBarberId}
-                      onChange={(e) => {
-                        setSelectedBarberId(e.target.value);
-                        if (e.target.value === 'any') {
-                          setSelectedStaff(null);
-                        } else {
-                          const b = staffMembers.find((s) => s.id === e.target.value);
-                          if (b) setSelectedStaff(b);
-                        }
-                      }}
-                      style={{ fontSize: '0.85rem', padding: '9px 12px' }}
-                    >
-                      <option value="any">✂️ Any Available Master Barber</option>
-                      {staffMembers.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          👤 {b.name} ({b.status === 'available' ? '🟢 Available' : b.status === 'busy' ? '🔴 In Session' : '🟡 On Break'})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  {/* Only show Barber Switcher if "Any Barber" option was selected */}
+                  {selectedBarberId === 'any' && (
+                    <div style={{ marginBottom: '10px' }}>
+                      <select
+                        className="form_select"
+                        value={selectedBarberId}
+                        onChange={(e) => {
+                          setSelectedBarberId(e.target.value);
+                          if (e.target.value === 'any') {
+                            setSelectedStaff(null);
+                          } else {
+                            const b = staffMembers.find((s) => s.id === e.target.value);
+                            if (b) setSelectedStaff(b);
+                          }
+                        }}
+                        style={{ fontSize: '0.82rem', padding: '7px 10px' }}
+                      >
+                        <option value="any">✂️ Any Available Master Barber</option>
+                        {staffMembers.map((b) => (
+                          <option key={b.id} value={b.id}>
+                            👤 {b.name} ({b.status === 'available' ? '🟢 Available' : b.status === 'busy' ? '🔴 In Session' : '🟡 On Break'})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
-                  <div style={{ height: '1px', background: 'rgba(213,163,83,0.15)', marginBottom: '14px' }} />
-
-                  {/* Booking Form */}
+                  {/* Compact Booking Form */}
                   <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                       <input
                         type="text"
                         className="form_input"
@@ -349,6 +349,7 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        style={{ padding: '8px 12px', fontSize: '0.85rem' }}
                       />
                       <input
                         type="email"
@@ -356,9 +357,10 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         placeholder="Email Address"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        style={{ padding: '8px 12px', fontSize: '0.85rem' }}
                       />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                       <input
                         type="tel"
                         className="form_input"
@@ -366,6 +368,7 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        style={{ padding: '8px 12px', fontSize: '0.85rem' }}
                       />
                       <input
                         type="date"
@@ -373,14 +376,15 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         required
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        style={{ padding: '8px 12px', fontSize: '0.85rem' }}
                       />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                       <div style={{ position: 'relative' }}>
-                        <Scissors size={14} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                        <Scissors size={13} color="#d5a353" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                         <select
                           className="form_select"
-                          style={{ paddingLeft: '34px' }}
+                          style={{ paddingLeft: '32px', padding: '8px 12px 8px 32px', fontSize: '0.82rem' }}
                           value={formData.service}
                           onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                         >
@@ -393,10 +397,10 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         </select>
                       </div>
                       <div style={{ position: 'relative' }}>
-                        <Clock size={14} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                        <Clock size={13} color="#d5a353" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                         <select
                           className="form_select"
-                          style={{ paddingLeft: '34px' }}
+                          style={{ paddingLeft: '32px', padding: '8px 12px 8px 32px', fontSize: '0.82rem' }}
                           value={formData.time}
                           onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                         >
@@ -411,13 +415,13 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                     </div>
                     <textarea
                       className="form_textarea"
-                      rows={2}
-                      style={{ marginBottom: '14px' }}
+                      rows={1}
+                      style={{ marginBottom: '10px', padding: '8px 12px', fontSize: '0.82rem', height: '38px', resize: 'none' }}
                       placeholder="Special instructions or hair style preferences (Optional)..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     />
-                    <div className="checkbox_row" style={{ marginBottom: '18px' }}>
+                    <div className="checkbox_row" style={{ marginBottom: '12px' }}>
                       <input
                         type="checkbox"
                         id="modal_agree_terms"
@@ -425,11 +429,11 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         checked={formData.accepted}
                         onChange={(e) => setFormData({ ...formData, accepted: e.target.checked })}
                       />
-                      <label htmlFor="modal_agree_terms" style={{ fontSize: '0.8rem' }}>
+                      <label htmlFor="modal_agree_terms" style={{ fontSize: '0.75rem', color: '#a89a8a' }}>
                         I agree that my booking data is collected and stored for appointment processing.
                       </label>
                     </div>
-                    <button type="submit" className="sc_button" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <button type="submit" className="sc_button" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '11px 20px', fontSize: '1.05rem' }}>
                       <Calendar size={16} />
                       CONFIRM APPOINTMENT BOOKING
                     </button>
