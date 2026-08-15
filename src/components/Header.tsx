@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, User, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Search, Menu, Scissors, ChevronDown } from 'lucide-react';
 
 interface HeaderProps {
   onOpenCart: () => void;
@@ -55,10 +55,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               className="nav_action_btn"
               onClick={() => navigate('/barber')}
-              title="Barber & Staff Portal"
+              title="Barber Mobile Portal"
               style={{ borderColor: 'rgba(213,163,83,0.35)', background: 'rgba(213,163,83,0.1)' }}
             >
-              <User size={18} color="#d5a353" />
+              <Scissors size={18} color="#d5a353" />
             </button>
             <button className="nav_action_btn" onClick={onOpenSearch} title="Search">
               <Search size={20} />
