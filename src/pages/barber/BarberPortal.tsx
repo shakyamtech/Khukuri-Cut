@@ -848,21 +848,52 @@ export const BarberPortal: React.FC = () => {
                           <div style={{ color: '#a89a8a', fontSize: '0.82rem', marginTop: '6px' }}>📅 {activeChairClient.date} · ⏰ {activeChairClient.time}</div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '10px' }}>
+                        <div style={{ display: 'flex', gap: '10px', width: isMobile ? '100%' : 'auto', marginTop: isMobile ? '12px' : 0 }}>
                           <a
                             href={`tel:${activeChairClient.phone}`}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(34,197,94,0.12)', border: '1px solid #22c55e', color: '#22c55e', borderRadius: '10px', padding: '10px 16px', fontWeight: 700, fontSize: '0.88rem', textDecoration: 'none' }}
+                            style={{
+                              flex: 1,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px',
+                              background: 'rgba(34,197,94,0.12)',
+                              border: '1px solid rgba(34,197,94,0.4)',
+                              color: '#22c55e',
+                              borderRadius: '10px',
+                              padding: '10px 16px',
+                              fontWeight: 700,
+                              fontSize: '0.85rem',
+                              textDecoration: 'none',
+                              whiteSpace: 'nowrap',
+                            }}
                           >
-                            <Phone size={16} />
+                            <Phone size={15} />
                             <span>Call {activeChairClient.phone}</span>
                           </a>
 
                           <button
                             onClick={() => handleAppointmentStatus(activeChairClient.id, 'completed')}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#ffffff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 16px rgba(34,197,94,0.4)' }}
+                            style={{
+                              flex: 1,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px',
+                              background: 'linear-gradient(135deg, #22c55e, #15803d)',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: '10px',
+                              padding: '10px 18px',
+                              fontWeight: 800,
+                              fontSize: '0.88rem',
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 16px rgba(34,197,94,0.35)',
+                              whiteSpace: 'nowrap',
+                            }}
                           >
-                            <CheckCircle size={18} />
-                            <span>MARK DONE ✅</span>
+                            <CheckCircle size={16} />
+                            <span>MARK DONE</span>
                           </button>
                         </div>
                       </div>
@@ -939,12 +970,52 @@ export const BarberPortal: React.FC = () => {
                             <div style={{ color: '#d5a353', fontSize: '0.88rem', fontWeight: 700, marginTop: '2px' }}>✂️ {appt.service}</div>
                             <div style={{ color: '#a89a8a', fontSize: '0.8rem', marginTop: '4px' }}>📅 {appt.date} · ⏰ {appt.time} · 📞 {appt.phone}</div>
                           </div>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <a href={`tel:${appt.phone}`} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid #22c55e', color: '#22c55e', borderRadius: '8px', padding: '8px 14px', fontSize: '0.82rem', textDecoration: 'none', fontWeight: 700 }}>
-                              Call Customer 📞
+                          <div style={{ display: 'flex', gap: '8px', width: isMobile ? '100%' : 'auto', marginTop: isMobile ? '8px' : 0 }}>
+                            <a
+                              href={`tel:${appt.phone}`}
+                              style={{
+                                flex: isMobile ? 1 : 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                background: 'rgba(34,197,94,0.12)',
+                                border: '1px solid rgba(34,197,94,0.4)',
+                                color: '#22c55e',
+                                borderRadius: '8px',
+                                padding: '8px 14px',
+                                fontSize: '0.82rem',
+                                textDecoration: 'none',
+                                fontWeight: 700,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              <Phone size={14} />
+                              <span>Call</span>
                             </a>
-                            <button onClick={() => handleAppointmentStatus(appt.id, 'completed')} style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer' }}>
-                              Mark Done ✅
+
+                            <button
+                              onClick={() => handleAppointmentStatus(appt.id, 'completed')}
+                              style={{
+                                flex: isMobile ? 1 : 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                background: 'linear-gradient(135deg, #22c55e, #15803d)',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '8px 16px',
+                                fontSize: '0.82rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 14px rgba(34,197,94,0.3)',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              <CheckCircle size={15} />
+                              <span>Mark Done</span>
                             </button>
                           </div>
                         </div>
