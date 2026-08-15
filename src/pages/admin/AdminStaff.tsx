@@ -327,11 +327,9 @@ export const AdminStaff: React.FC = () => {
       {showAddModal && (
         <div
           style={{ position: 'fixed', inset: 0, background: 'rgba(10,8,6,0.85)', backdropFilter: 'blur(8px)', zIndex: 9990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-          onClick={() => setShowAddModal(false)}
         >
           <div
             style={{ background: 'linear-gradient(145deg, #1c1612, #161210)', border: '1.5px solid #d5a353', borderRadius: '18px', width: '100%', maxWidth: '540px', position: 'relative', boxShadow: '0 25px 70px rgba(0,0,0,0.8)', overflow: 'hidden', animation: 'fadeSlideUp 0.3s ease' }}
-            onClick={(e) => e.stopPropagation()}
           >
             <div style={{ height: '4px', background: 'linear-gradient(90deg, #d5a353, #c4893f, #d5a353)' }} />
             
