@@ -46,9 +46,16 @@ const SERVICE_PRICES: Record<string, number> = {
 
 function getAppointments(): Appointment[] {
   const saved = localStorage.getItem('kc_appointments');
-  const real: Appointment[] = saved ? JSON.parse(saved) : [];
-  // Merge demo + real, real ones first
-  return [...real, ...DEMO_APPOINTMENTS];
+  if (saved !== null) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  localStorage.setItem('kc_appointments', JSON.stringify(DEMO_APPOINTMENTS));
+  return DEMO_APPOINTMENTS;
 }
 
 const StatCard: React.FC<{
@@ -360,8 +367,27 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {appointments.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '30px', color: '#6a5a4a', fontSize: '0.88rem' }}>
-            No recent appointments. All clear!
+          <div style={{ textAlign: 'center', padding: '36px', color: '#6a5a4a', fontSize: '0.88rem' }}>
+            <p style={{ margin: '0 0 12px' }}>No recent appointments. All clear!</p>
+            <button
+              onClick={() => {
+                setAppointments(DEMO_APPOINTMENTS);
+                localStorage.setItem('kc_appointments', JSON.stringify(DEMO_APPOINTMENTS));
+                window.dispatchEvent(new Event(APPOINTMENT_EVENT_UPDATED));
+              }}
+              style={{
+                background: 'rgba(213,163,83,0.1)',
+                border: '1px solid rgba(213,163,83,0.3)',
+                borderRadius: '8px',
+                color: '#d5a353',
+                padding: '6px 14px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              🔄 Restore Demo Samples
+            </button>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
