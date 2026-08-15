@@ -16,6 +16,7 @@ export interface StaffMember {
   totalCuts: number;
   color: string;
   initials: string;
+  pin?: string;
 }
 
 export const DEFAULT_STAFF: StaffMember[] = [
@@ -35,6 +36,7 @@ export const DEFAULT_STAFF: StaffMember[] = [
     totalCuts: 3200,
     color: '#d5a353',
     initials: 'SG',
+    pin: '1001',
   },
   {
     id: 'laxman',

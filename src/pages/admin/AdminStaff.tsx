@@ -262,8 +262,8 @@ export const AdminStaff: React.FC = () => {
                 📍 {member.specialty}
               </div>
 
-              {/* Contact info */}
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+              {/* Contact info & Security PIN */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
                 <div style={contactPill}>
                   <Phone size={11} color="#d5a353" />
                   <span>{member.phone}</span>
@@ -271,6 +271,9 @@ export const AdminStaff: React.FC = () => {
                 <div style={contactPill}>
                   <AtSign size={11} color="#d5a353" />
                   <span>{member.instagram}</span>
+                </div>
+                <div style={{ ...contactPill, background: 'rgba(213,163,83,0.12)', border: '1px solid rgba(213,163,83,0.3)', color: '#d5a353', fontWeight: 700 }}>
+                  <span>🔑 PIN: {member.pin || (member.id === 'subash' ? '1001' : member.id === 'laxman' ? '1002' : member.id === 'anup' ? '1003' : member.id === 'kiran' ? '1004' : '1001')}</span>
                 </div>
               </div>
 
