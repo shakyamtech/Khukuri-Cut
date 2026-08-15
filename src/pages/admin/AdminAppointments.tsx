@@ -50,6 +50,8 @@ export const AdminAppointments: React.FC = () => {
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [toast, setToast] = useState('');
 
+  const [dateFilter, setDateFilter] = useState<string>('all');
+
   useEffect(() => {
     setAppointments(loadAppointments());
   }, []);
@@ -87,7 +89,13 @@ export const AdminAppointments: React.FC = () => {
       a.phone.includes(search) ||
       a.service.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || a.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchDate =
+      dateFilter === 'all' ||
+      a.date === dateFilter ||
+      (dateFilter === 'today' && a.date === '2025-08-15') ||
+      (dateFilter === 'tomorrow' && a.date === '2025-08-16');
+
+    return matchSearch && matchStatus && matchDate;
   });
 
   return (
@@ -100,7 +108,84 @@ export const AdminAppointments: React.FC = () => {
         </div>
       )}
 
-      {/* Filters */}
+      {/* Day-Wise Date Filter Bar */}
+      <div style={{ background: 'rgba(28,22,18,0.95)', border: '1px solid rgba(213,163,83,0.18)', borderRadius: '14px', padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ color: '#d5a353', fontSize: '0.78rem', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', marginRight: '6px' }}>
+            📅 DAY-WISE FILTER:
+          </div>
+
+          <button
+            onClick={() => setDateFilter('all')}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '0.78rem',
+              fontWeight: dateFilter === 'all' ? 800 : 600,
+              background: dateFilter === 'all' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+              color: dateFilter === 'all' ? '#191514' : '#a89a8a',
+              border: dateFilter === 'all' ? '1px solid #d5a353' : '1px solid rgba(213,163,83,0.2)',
+              cursor: 'pointer',
+            }}
+          >
+            🌟 All Dates ({appointments.length})
+          </button>
+
+          <button
+            onClick={() => setDateFilter('2025-08-15')}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '0.78rem',
+              fontWeight: dateFilter === '2025-08-15' ? 800 : 600,
+              background: dateFilter === '2025-08-15' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+              color: dateFilter === '2025-08-15' ? '#191514' : '#a89a8a',
+              border: dateFilter === '2025-08-15' ? '1px solid #d5a353' : '1px solid rgba(213,163,83,0.2)',
+              cursor: 'pointer',
+            }}
+          >
+            📅 Today (Aug 15)
+          </button>
+
+          <button
+            onClick={() => setDateFilter('2025-08-16')}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '0.78rem',
+              fontWeight: dateFilter === '2025-08-16' ? 800 : 600,
+              background: dateFilter === '2025-08-16' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+              color: dateFilter === '2025-08-16' ? '#191514' : '#a89a8a',
+              border: dateFilter === '2025-08-16' ? '1px solid #d5a353' : '1px solid rgba(213,163,83,0.2)',
+              cursor: 'pointer',
+            }}
+          >
+            ⏩ Tomorrow (Aug 16)
+          </button>
+
+          <input
+            type="date"
+            value={dateFilter !== 'all' && dateFilter !== '2025-08-15' && dateFilter !== '2025-08-16' ? dateFilter : ''}
+            onChange={(e) => setDateFilter(e.target.value || 'all')}
+            style={{
+              padding: '5px 12px',
+              borderRadius: '20px',
+              fontSize: '0.78rem',
+              background: 'rgba(0,0,0,0.4)',
+              border: '1px solid rgba(213,163,83,0.35)',
+              color: '#d5a353',
+              cursor: 'pointer',
+              outline: 'none',
+            }}
+          />
+        </div>
+
+        <div style={{ color: '#d5a353', fontSize: '0.82rem', fontWeight: 700 }}>
+          Showing {filtered.length} booking{filtered.length !== 1 ? 's' : ''} for selected date
+        </div>
+      </div>
+
+      {/* Search & Status Filters */}
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={inputWrap}>
           <Search size={16} color="#6a5a4a" style={{ flexShrink: 0 }} />
@@ -126,10 +211,6 @@ export const AdminAppointments: React.FC = () => {
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
-        </div>
-
-        <div style={{ marginLeft: 'auto', color: '#6a5a4a', fontSize: '0.82rem' }}>
-          {filtered.length} appointment{filtered.length !== 1 ? 's' : ''}
         </div>
       </div>
 

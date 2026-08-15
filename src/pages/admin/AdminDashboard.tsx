@@ -4,12 +4,13 @@ import {
   CalendarCheck,
   TrendingUp,
   Users,
-  ShoppingBag,
   Clock,
   CheckCircle,
   AlertCircle,
   Scissors,
+  Trash2,
 } from 'lucide-react';
+import { APPOINTMENT_EVENT_UPDATED } from '../../utils/audioAlert';
 
 export interface Appointment {
   id: string;
@@ -120,6 +121,23 @@ export const AdminDashboard: React.FC = () => {
   const topServices = Object.entries(serviceCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const maxCount = Math.max(...topServices.map((s) => s[1]), 1);
 
+  const handleDeleteAppointment = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this appointment record?')) {
+      const updated = appointments.filter((a) => a.id !== id);
+      setAppointments(updated);
+      localStorage.setItem('kc_appointments', JSON.stringify(updated));
+      window.dispatchEvent(new Event(APPOINTMENT_EVENT_UPDATED));
+    }
+  };
+
+  const handleClearAllAppointments = () => {
+    if (window.confirm('Are you sure you want to CLEAR ALL appointment records? This will reset all recent history!')) {
+      setAppointments([]);
+      localStorage.setItem('kc_appointments', JSON.stringify([]));
+      window.dispatchEvent(new Event(APPOINTMENT_EVENT_UPDATED));
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Greeting */}
@@ -144,27 +162,19 @@ export const AdminDashboard: React.FC = () => {
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
         {/* Services Chart */}
         <div style={panelStyle}>
-          <div style={panelHeader}>
+          <div style={{ ...panelHeader, marginBottom: '16px' }}>
             <Scissors size={16} color="#d5a353" />
             <span style={panelTitle}>Top Services Booked</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-            {topServices.map(([service, count]) => (
-              <div key={service}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                  <span style={{ color: '#d8cfc4', fontSize: '0.82rem' }}>{service}</span>
-                  <span style={{ color: '#d5a353', fontSize: '0.82rem', fontWeight: 700 }}>{count}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {topServices.map(([srv, count]) => (
+              <div key={srv}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#d8cfc4', marginBottom: 4 }}>
+                  <span>{srv}</span>
+                  <span style={{ color: '#d5a353', fontWeight: 600 }}>{count}</span>
                 </div>
-                <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${(count / maxCount) * 100}%`,
-                      background: 'linear-gradient(90deg, #d5a353, #c4893f)',
-                      borderRadius: 3,
-                      transition: 'width 0.8s ease',
-                    }}
-                  />
+                <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+                  <div style={{ width: `${(count / maxCount) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #d5a353, #c4893f)', borderRadius: '4px' }} />
                 </div>
               </div>
             ))}
@@ -173,75 +183,58 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Status Breakdown */}
         <div style={panelStyle}>
-          <div style={panelHeader}>
+          <div style={{ ...panelHeader, marginBottom: '16px' }}>
             <AlertCircle size={16} color="#d5a353" />
             <span style={panelTitle}>Status Breakdown</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '10px' }}>
-            {(['pending', 'confirmed', 'completed', 'cancelled'] as const).map((status) => {
-              const count = appointments.filter((a) => a.status === status).length;
-              const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-              return (
-                <div key={status} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: STATUS_COLORS[status], flexShrink: 0 }} />
-                  <span style={{ color: '#a89070', fontSize: '0.82rem', textTransform: 'capitalize', flex: 1 }}>{status}</span>
-                  <span style={{ color: STATUS_COLORS[status], fontWeight: 700, fontSize: '0.9rem' }}>{count}</span>
-                  <span style={{ color: '#5a4a3a', fontSize: '0.75rem', width: 36, textAlign: 'right' }}>{pct}%</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[
+              { label: 'Pending', count: pending, color: '#f59e0b' },
+              { label: 'Confirmed', count: confirmed, color: '#3b82f6' },
+              { label: 'Completed', count: completed, color: '#22c55e' },
+              { label: 'Cancelled', count: appointments.filter((a) => a.status === 'cancelled').length, color: '#ef4444' },
+            ].map(({ label, count, color }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
+                  <span style={{ color: '#a89a8a' }}>{label}</span>
                 </div>
-              );
-            })}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <span style={{ color: '#f9f6f2', fontWeight: 700 }}>{count}</span>
+                  <span style={{ color: '#6a5a4a', width: '35px', textAlign: 'right' }}>
+                    {total ? `${Math.round((count / total) * 100)}%` : '0%'}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Users size={14} color="#6a5a4a" />
-              <span style={{ color: '#6a5a4a', fontSize: '0.75rem' }}>Total Clients: {total}</span>
-            </div>
-            <div style={{ flex: 1 }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <ShoppingBag size={14} color="#6a5a4a" />
-              <span style={{ color: '#6a5a4a', fontSize: '0.75rem' }}>Services: {Object.keys(serviceCount).length}</span>
-            </div>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '16px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#6a5a4a' }}>
+            <span>Total Clients: {total}</span>
+            <span>Services: {Object.keys(serviceCount).length}</span>
           </div>
         </div>
 
         {/* Live Staff Availability Panel */}
         <div style={panelStyle}>
-          <div style={panelHeader}>
+          <div style={{ ...panelHeader, marginBottom: '16px' }}>
             <Users size={16} color="#d5a353" />
             <span style={panelTitle}>Live Staff Status</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {getStoredStaff().map((staff) => (
-              <div
-                key={staff.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'rgba(255,255,255,0.03)',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                }}
-              >
+              <div key={staff.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: '10px' }}>
                 <div>
-                  <div style={{ color: '#f9f6f2', fontSize: '0.88rem', fontWeight: 600 }}>{staff.name}</div>
+                  <div style={{ color: '#f9f6f2', fontSize: '0.85rem', fontWeight: 600 }}>{staff.name}</div>
                   <div style={{ color: '#8a7a6a', fontSize: '0.72rem' }}>{staff.role}</div>
                 </div>
                 <span
                   style={{
                     fontSize: '0.72rem',
-                    fontWeight: 700,
-                    padding: '3px 8px',
-                    borderRadius: '12px',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    fontWeight: 600,
+                    background: staff.status === 'available' ? 'rgba(34,197,94,0.15)' : staff.status === 'busy' ? 'rgba(239,68,68,0.15)' : 'rgba(234,179,8,0.15)',
                     color: staff.status === 'available' ? '#22c55e' : staff.status === 'busy' ? '#ef4444' : '#eab308',
-                    background:
-                      staff.status === 'available'
-                        ? 'rgba(34,197,94,0.12)'
-                        : staff.status === 'busy'
-                        ? 'rgba(239,68,68,0.12)'
-                        : 'rgba(234,179,8,0.12)',
                     border: `1px solid ${
                       staff.status === 'available'
                         ? 'rgba(34,197,94,0.3)'
@@ -261,55 +254,110 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Recent Appointments */}
       <div style={panelStyle}>
-        <div style={{ ...panelHeader, marginBottom: '16px' }}>
-          <CalendarCheck size={16} color="#d5a353" />
-          <span style={panelTitle}>Recent Appointments</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={panelHeader}>
+            <CalendarCheck size={16} color="#d5a353" />
+            <span style={panelTitle}>Recent Appointments ({appointments.length})</span>
+          </div>
+
+          {appointments.length > 0 && (
+            <button
+              onClick={handleClearAllAppointments}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(239,68,68,0.1)',
+                border: '1px solid rgba(239,68,68,0.28)',
+                borderRadius: '8px',
+                color: '#ef4444',
+                fontSize: '0.75rem',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                transition: 'all 0.2s ease',
+              }}
+              title="Clear All Recent Appointments History"
+            >
+              <Trash2 size={13} />
+              <span>CLEAR ALL HISTORY</span>
+            </button>
+          )}
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={tableStyle.table}>
-            <thead>
-              <tr>
-                {['Client', 'Service', 'Date', 'Time', 'Status'].map((h) => (
-                  <th key={h} style={tableStyle.th}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {recentAppts.map((appt) => (
-                <tr key={appt.id} style={tableStyle.tr}>
-                  <td style={tableStyle.td}>
-                    <div style={{ color: '#f9f6f2', fontWeight: 600, fontSize: '0.88rem' }}>{appt.name}</div>
-                    <div style={{ color: '#6a5a4a', fontSize: '0.75rem' }}>{appt.phone}</div>
-                  </td>
-                  <td style={tableStyle.td}>
-                    <span style={{ color: '#d5a353', fontSize: '0.82rem' }}>{appt.service}</span>
-                  </td>
-                  <td style={tableStyle.td}>
-                    <span style={{ color: '#d8cfc4', fontSize: '0.85rem' }}>{appt.date}</span>
-                  </td>
-                  <td style={tableStyle.td}>
-                    <span style={{ color: '#d8cfc4', fontSize: '0.85rem' }}>{appt.time}</span>
-                  </td>
-                  <td style={tableStyle.td}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '3px 10px',
-                      borderRadius: '20px',
-                      fontSize: '0.72rem',
-                      fontWeight: 600,
-                      textTransform: 'capitalize',
-                      background: `${STATUS_COLORS[appt.status]}18`,
-                      color: STATUS_COLORS[appt.status],
-                      border: `1px solid ${STATUS_COLORS[appt.status]}35`,
-                    }}>
-                      {appt.status}
-                    </span>
-                  </td>
+
+        {appointments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '30px', color: '#6a5a4a', fontSize: '0.88rem' }}>
+            No recent appointments. All clear!
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={tableStyle.table}>
+              <thead>
+                <tr>
+                  {['Client', 'Service', 'Date', 'Time', 'Status', 'Action'].map((h) => (
+                    <th key={h} style={tableStyle.th}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {recentAppts.map((appt) => (
+                  <tr key={appt.id} style={tableStyle.tr}>
+                    <td style={tableStyle.td}>
+                      <div style={{ color: '#f9f6f2', fontWeight: 600, fontSize: '0.88rem' }}>{appt.name}</div>
+                      <div style={{ color: '#6a5a4a', fontSize: '0.75rem' }}>{appt.phone}</div>
+                    </td>
+                    <td style={tableStyle.td}>
+                      <span style={{ color: '#d5a353', fontSize: '0.82rem' }}>{appt.service}</span>
+                    </td>
+                    <td style={tableStyle.td}>
+                      <span style={{ color: '#d8cfc4', fontSize: '0.85rem' }}>{appt.date}</span>
+                    </td>
+                    <td style={tableStyle.td}>
+                      <span style={{ color: '#d8cfc4', fontSize: '0.85rem' }}>{appt.time}</span>
+                    </td>
+                    <td style={tableStyle.td}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '3px 10px',
+                        borderRadius: '20px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        textTransform: 'capitalize',
+                        background: `${STATUS_COLORS[appt.status]}18`,
+                        color: STATUS_COLORS[appt.status],
+                        border: `1px solid ${STATUS_COLORS[appt.status]}35`,
+                      }}>
+                        {appt.status}
+                      </span>
+                    </td>
+                    <td style={tableStyle.td}>
+                      <button
+                        onClick={() => handleDeleteAppointment(appt.id)}
+                        style={{
+                          background: 'rgba(239,68,68,0.1)',
+                          border: '1px solid rgba(239,68,68,0.25)',
+                          borderRadius: '6px',
+                          color: '#ef4444',
+                          padding: '4px 8px',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.72rem',
+                          fontWeight: 600,
+                        }}
+                        title="Delete Appointment Record"
+                      >
+                        <Trash2 size={13} />
+                        <span>Delete</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
