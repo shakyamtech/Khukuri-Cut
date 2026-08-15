@@ -10,7 +10,24 @@ import {
   ChevronRight,
   Menu,
   X,
+  Bell,
+  Volume2,
 } from 'lucide-react';
+import {
+  playSweetDingSound,
+  APPOINTMENT_EVENT_CREATED,
+  APPOINTMENT_EVENT_UPDATED,
+} from '../../utils/audioAlert';
+import type { Appointment } from './AdminDashboard';
+
+const DEMO_APPOINTMENTS: Appointment[] = [
+  { id: 'd1', name: 'Aarav Sharma', email: 'aarav@gmail.com', phone: '9841000001', date: '2025-08-15', time: '11:00 AM', service: 'HAIRCUTTING', notes: '', status: 'confirmed', submittedAt: '2025-08-13T10:00:00Z' },
+  { id: 'd2', name: 'Bishal Thapa', email: 'bishal@gmail.com', phone: '9841000002', date: '2025-08-15', time: '01:30 PM', service: 'SHAVING', notes: 'Hot towel only', status: 'pending', submittedAt: '2025-08-13T10:30:00Z' },
+  { id: 'd3', name: 'Sunil Karki', email: 'sunil@gmail.com', phone: '9841000003', date: '2025-08-16', time: '03:00 PM', service: 'HAIRCUT + SHAVE', notes: '', status: 'completed', submittedAt: '2025-08-13T11:00:00Z' },
+  { id: 'd4', name: 'Manish KC', email: 'manish@gmail.com', phone: '9841000004', date: '2025-08-16', time: '05:00 PM', service: 'STYLING', notes: 'Pompadour style', status: 'pending', submittedAt: '2025-08-13T11:30:00Z' },
+  { id: 'd5', name: 'Ramesh Basnet', email: 'ramesh@gmail.com', phone: '9841000005', date: '2025-08-17', time: '07:00 PM', service: 'TRIMMING', notes: '', status: 'cancelled', submittedAt: '2025-08-13T12:00:00Z' },
+  { id: 'd6', name: 'Dipesh Gurung', email: 'dipesh@gmail.com', phone: '9841000006', date: '2025-08-18', time: '12:00 PM', service: 'HAIRCUTTING', notes: 'Fade cut', status: 'pending', submittedAt: '2025-08-13T13:00:00Z' },
+];
 
 const navItems = [
   { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,10 +37,24 @@ const navItems = [
   { path: '/admin/products', label: 'Products', icon: ShoppingBag },
 ];
 
+function getPendingCount(): number {
+  try {
+    const saved = localStorage.getItem('kc_appointments');
+    const real: Appointment[] = saved ? JSON.parse(saved) : [];
+    const all = [...real, ...DEMO_APPOINTMENTS];
+    return all.filter((a) => a.status === 'pending').length;
+  } catch (e) {
+    console.error('Error parsing appointments count', e);
+    return 0;
+  }
+}
+
 export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [pendingCount, setPendingCount] = useState<number>(getPendingCount);
+  const [toastAlert, setToastAlert] = useState<{ name: string; service: string } | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('kc_admin_auth');
@@ -31,6 +62,34 @@ export const AdminLayout: React.FC = () => {
       navigate('/admin');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const updateCount = () => {
+      setPendingCount(getPendingCount());
+    };
+
+    const handleNewAppointment = (e: Event) => {
+      updateCount();
+      playSweetDingSound();
+
+      const detail = (e as CustomEvent)?.detail;
+      const clientName = detail?.name || 'New Client';
+      const serviceName = detail?.service || 'Appointment';
+
+      setToastAlert({ name: clientName, service: serviceName });
+      setTimeout(() => setToastAlert(null), 4000);
+    };
+
+    window.addEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
+    window.addEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
+    window.addEventListener('storage', updateCount);
+
+    return () => {
+      window.removeEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
+      window.removeEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
+      window.removeEventListener('storage', updateCount);
+    };
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem('kc_admin_auth');
@@ -74,6 +133,8 @@ export const AdminLayout: React.FC = () => {
         <nav style={styles.nav}>
           {navItems.map((item) => {
             const active = location.pathname === item.path;
+            const isAppointments = item.path === '/admin/appointments';
+
             return (
               <button
                 key={item.path}
@@ -85,13 +146,25 @@ export const AdminLayout: React.FC = () => {
                   borderLeft: active ? '3px solid #d5a353' : '3px solid transparent',
                   color: active ? '#d5a353' : '#8a7a6a',
                   justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  position: 'relative',
                 }}
               >
-                <item.icon size={20} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <item.icon size={20} />
+                  {isAppointments && pendingCount > 0 && !sidebarOpen && (
+                    <span style={collapsedBadgeStyle}>{pendingCount}</span>
+                  )}
+                </div>
+
                 {sidebarOpen && (
                   <>
                     <span style={styles.navLabel}>{item.label}</span>
-                    {active && <ChevronRight size={14} style={{ marginLeft: 'auto' }} />}
+                    {isAppointments && pendingCount > 0 && (
+                      <span style={expandedBadgeStyle}>
+                        {pendingCount}
+                      </span>
+                    )}
+                    {active && !isAppointments && <ChevronRight size={14} style={{ marginLeft: 'auto' }} />}
                   </>
                 )}
               </button>
@@ -100,6 +173,33 @@ export const AdminLayout: React.FC = () => {
         </nav>
 
         <div style={{ flex: 1 }} />
+
+        {/* Sound Test / Manual Chime Trigger */}
+        {sidebarOpen && (
+          <div style={{ padding: '0 16px 10px' }}>
+            <button
+              onClick={() => playSweetDingSound()}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                padding: '8px 12px',
+                background: 'rgba(213,163,83,0.08)',
+                border: '1px solid rgba(213,163,83,0.2)',
+                borderRadius: '8px',
+                color: '#d5a353',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+              title="Test Sound Alert"
+            >
+              <Volume2 size={14} />
+              <span>Test Bell Chime Sound</span>
+            </button>
+          </div>
+        )}
 
         {/* Logout */}
         <div style={{ padding: '16px' }}>
@@ -126,11 +226,37 @@ export const AdminLayout: React.FC = () => {
             </div>
             <div style={styles.topBarSub}>Khukuri Cut · Durbar Marg, Kathmandu</div>
           </div>
-          <div style={styles.adminBadge}>
-            <div style={styles.adminAvatar}>A</div>
-            <div>
-              <div style={{ color: '#f9f6f2', fontSize: '0.85rem', fontWeight: 600 }}>Admin</div>
-              <div style={{ color: '#8a7a6a', fontSize: '0.72rem' }}>Super User</div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Quick Pending Alert Badge in Top Bar */}
+            {pendingCount > 0 && (
+              <div
+                onClick={() => navigate('/admin/appointments')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.35)',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  animation: 'pulseGlow 2s infinite',
+                }}
+              >
+                <Bell size={15} color="#f59e0b" />
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b' }}>
+                  {pendingCount} Pending Bookings
+                </span>
+              </div>
+            )}
+
+            <div style={styles.adminBadge}>
+              <div style={styles.adminAvatar}>A</div>
+              <div>
+                <div style={{ color: '#f9f6f2', fontSize: '0.85rem', fontWeight: 600 }}>Admin</div>
+                <div style={{ color: '#8a7a6a', fontSize: '0.72rem' }}>Super User</div>
+              </div>
             </div>
           </div>
         </div>
@@ -141,15 +267,99 @@ export const AdminLayout: React.FC = () => {
         </div>
       </main>
 
+      {/* Toast Notification Popup when New Appointment Arrives */}
+      {toastAlert && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '24px',
+            right: '24px',
+            zIndex: 9999,
+            background: 'linear-gradient(135deg, #2b2118, #18130f)',
+            border: '1.5px solid #d5a353',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(213,163,83,0.3)',
+            borderRadius: '14px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+            animation: 'toastSlideIn 0.35s ease',
+            maxWidth: '380px',
+          }}
+        >
+          <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 0 14px rgba(213,163,83,0.5)' }}>
+            <Bell size={20} color="#191514" />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#d5a353', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
+              🔔 NEW APPOINTMENT RECEIVED!
+            </div>
+            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f9f6f2', marginTop: '2px' }}>
+              {toastAlert.name}
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#a89a8a' }}>
+              Booked: <span style={{ color: '#d5a353' }}>{toastAlert.service}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0d0b0a; }
         ::-webkit-scrollbar-thumb { background: rgba(213,163,83,0.3); border-radius: 3px; }
+
+        @keyframes pulseGlow {
+          0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        @keyframes toastSlideIn {
+          from {
+            opacity: 0;
+            transform: translateX(40px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+          }
+        }
       `}</style>
     </div>
   );
+};
+
+/* Styles */
+const expandedBadgeStyle: React.CSSProperties = {
+  marginLeft: 'auto',
+  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+  color: '#191514',
+  fontSize: '0.72rem',
+  fontWeight: 800,
+  padding: '2px 8px',
+  borderRadius: '12px',
+  boxShadow: '0 0 10px rgba(245,158,11,0.4)',
+  lineHeight: 1.3,
+};
+
+const collapsedBadgeStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '-6px',
+  right: '-8px',
+  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+  color: '#191514',
+  fontSize: '0.65rem',
+  fontWeight: 800,
+  width: '18px',
+  height: '18px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: '0 0 8px rgba(245,158,11,0.5)',
 };
 
 const styles: Record<string, React.CSSProperties> = {

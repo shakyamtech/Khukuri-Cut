@@ -56,6 +56,7 @@ export const AdminAppointments: React.FC = () => {
     setAppointments((prev) => {
       const updated = prev.map((a) => (a.id === id ? { ...a, status } : a));
       saveRealAppointments(updated);
+      window.dispatchEvent(new Event('kc_appointment_updated'));
       return updated;
     });
     setSelected((prev) => (prev?.id === id ? { ...prev, status } : prev));
@@ -66,10 +67,11 @@ export const AdminAppointments: React.FC = () => {
     setAppointments((prev) => {
       const updated = prev.filter((a) => a.id !== id);
       saveRealAppointments(updated);
+      window.dispatchEvent(new Event('kc_appointment_updated'));
       return updated;
     });
     setSelected(null);
-    showToast('Appointment deleted.');
+    showToast('Appointment removed.');
   };
 
   const filtered = appointments.filter((a) => {

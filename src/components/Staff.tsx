@@ -99,6 +99,10 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
     const existing = JSON.parse(localStorage.getItem('kc_appointments') || '[]');
     localStorage.setItem('kc_appointments', JSON.stringify([newAppt, ...existing]));
 
+    // Dispatch event for Admin notification & audio ding
+    window.dispatchEvent(new CustomEvent('kc_appointment_created', { detail: newAppt }));
+    window.dispatchEvent(new Event('kc_appointment_updated'));
+
     setIsSubmitted(true);
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
   };
