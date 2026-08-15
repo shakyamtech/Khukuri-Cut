@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShoppingCart, Search, Menu, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, Search, Menu, Scissors, ChevronDown } from 'lucide-react';
 
 interface HeaderProps {
   onOpenCart: () => void;
@@ -14,7 +15,6 @@ export const KhukuriBarberLogo: React.FC<{ size?: number }> = ({ size = 135 }) =
     {/* Outer Dashed Golden Badge Ring */}
     <circle cx="100" cy="100" r="92" stroke="#d5a353" strokeWidth="2.5" strokeDasharray="6 4"/>
     <circle cx="100" cy="100" r="82" stroke="#d5a353" strokeWidth="1.5"/>
-
 
     {/* Center Emblem: Barber Scissors & Razor Blade */}
     <g transform="translate(0, -6)">
@@ -62,18 +62,28 @@ export const Header: React.FC<HeaderProps> = ({
   onBookClick,
   cartCount,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <header className="top_panel" style={{ backgroundImage: "url('/images/hero_bg.png')" }} id="home">
       <div className="top_panel_overlay"></div>
       <div className="top_panel_inner">
         {/* Navigation Top Bar */}
         <div className="header_nav_bar">
-          <div className="logo_brand">
+          <div className="logo_brand" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             <KhukuriBarberLogo size={55} />
             <div className="logo_text">KHUKURI CUT</div>
           </div>
 
           <div className="nav_right_actions">
+            <button
+              className="nav_action_btn"
+              onClick={() => navigate('/barber')}
+              title="Barber Mobile Portal"
+              style={{ borderColor: 'rgba(213,163,83,0.35)', background: 'rgba(213,163,83,0.1)' }}
+            >
+              <Scissors size={18} color="#d5a353" />
+            </button>
             <button className="nav_action_btn" onClick={onOpenSearch} title="Search">
               <Search size={20} />
             </button>

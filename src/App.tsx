@@ -24,6 +24,8 @@ import { AdminServices } from './pages/admin/AdminServices';
 import { AdminStaff } from './pages/admin/AdminStaff';
 import { AdminProducts } from './pages/admin/AdminProducts';
 
+import { BarberPortal } from './pages/barber/BarberPortal';
+
 // ─── Main Site Page ───────────────────────────────────────────────────────────
 function MainSite() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -112,6 +114,9 @@ export function App() {
     <Routes>
       {/* Main website */}
       <Route path="/" element={<MainSite />} />
+
+      {/* Barber Mobile Portal */}
+      <Route path="/barber" element={<BarberPortal />} />
 
       {/* Admin login */}
       <Route path="/admin" element={<AdminLogin />} />

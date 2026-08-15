@@ -22,6 +22,7 @@ export interface Appointment {
   notes: string;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   submittedAt: string;
+  barber?: string;
 }
 
 // Demo / seed appointments shown until real ones exist

@@ -73,6 +73,16 @@ export const Navigation: React.FC<NavigationProps> = ({
                   <span>APPOINTMENT</span> <ArrowRight size={18} />
                 </a>
               </li>
+              <li style={{ borderTop: '1px solid rgba(213,163,83,0.15)', paddingTop: '10px', marginTop: '10px' }}>
+                <a href="/barber" onClick={(e) => { e.preventDefault(); onCloseMenu(); window.location.href = '/barber'; }}>
+                  <span style={{ color: '#d5a353', fontWeight: 700 }}>💈 BARBER MOBILE PORTAL</span> <ArrowRight size={18} color="#d5a353" />
+                </a>
+              </li>
+              <li>
+                <a href="/admin" onClick={(e) => { e.preventDefault(); onCloseMenu(); window.location.href = '/admin'; }}>
+                  <span style={{ color: '#8a7a6a' }}>🔑 ADMIN LOGIN</span> <ArrowRight size={18} color="#8a7a6a" />
+                </a>
+              </li>
             </ul>
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
