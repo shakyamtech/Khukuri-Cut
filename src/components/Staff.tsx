@@ -260,21 +260,21 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
         <div
           className="modal_overlay"
           onClick={closeModal}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(10,8,6,0.88)', backdropFilter: 'blur(8px)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflowY: 'auto' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(10,8,6,0.88)', backdropFilter: 'blur(8px)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', overflowY: 'auto' }}
         >
           <div
             className="modal_content"
             onClick={(e) => e.stopPropagation()}
-            style={{ background: 'linear-gradient(145deg, #1c1612, #161210)', border: '1px solid rgba(213,163,83,0.3)', borderRadius: '20px', width: '100%', maxWidth: '580px', position: 'relative', boxShadow: '0 30px 80px rgba(0,0,0,0.8)', animation: 'fadeSlideUp 0.3s ease', overflow: 'hidden', padding: 0 }}
+            style={{ background: 'linear-gradient(145deg, #1c1612, #161210)', border: '1px solid rgba(213,163,83,0.35)', borderRadius: '20px', width: '100%', maxWidth: '560px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 30px 80px rgba(0,0,0,0.9)', animation: 'fadeSlideUp 0.3s ease', padding: 0 }}
           >
             {/* Top Gold Accent Strip */}
             <div style={{ height: '4px', background: 'linear-gradient(90deg, #d5a353, #c4893f, #d5a353)', width: '100%' }} />
 
-            <div style={{ padding: '28px 32px 32px' }}>
+            <div style={{ padding: '22px 26px 26px' }}>
               {/* Close Button */}
               <button
                 onClick={closeModal}
-                style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#8a7a6a', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+                style={{ position: 'absolute', top: '14px', right: '14px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#8a7a6a', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
               >
                 <X size={18} />
               </button>
@@ -282,36 +282,36 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
               {!isSubmitted ? (
                 <>
                   {/* Barber Header Info */}
-                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: '14px' }}>
                     {currentBarber ? (
                       <>
-                        <div style={{ width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 12px', border: '3px solid #d5a353', boxShadow: '0 0 24px rgba(213,163,83,0.35)' }}>
+                        <div style={{ width: '74px', height: '74px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 8px', border: '3px solid #d5a353', boxShadow: '0 0 20px rgba(213,163,83,0.35)' }}>
                           <img src={currentBarber.image} alt={currentBarber.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
                         </div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px', lineHeight: 1 }}>{currentBarber.name}</h3>
-                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.85rem', color: '#a89a8a', marginBottom: '8px' }}>{currentBarber.role}</p>
-                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '0px', letterSpacing: '1px', lineHeight: 1 }}>{currentBarber.name}</h3>
+                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '6px' }}>{currentBarber.role}</p>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
                           {renderStatusBadge(currentBarber.status, currentBarber.statusNote)}
                         </div>
 
                         {/* Bio / Specialty Box */}
-                        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(213,163,83,0.15)', padding: '12px 16px', borderRadius: '10px', textAlign: 'left', marginBottom: '18px', fontSize: '0.85rem' }}>
-                          <p style={{ color: '#d5a353', marginBottom: '4px' }}><strong>Specialty:</strong> {currentBarber.specialty}</p>
-                          <p style={{ color: '#d8cfc4', fontSize: '0.82rem', lineHeight: '1.4' }}>{currentBarber.bio}</p>
+                        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(213,163,83,0.15)', padding: '10px 14px', borderRadius: '10px', textAlign: 'left', marginBottom: '14px', fontSize: '0.82rem' }}>
+                          <p style={{ color: '#d5a353', marginBottom: '3px' }}><strong>Specialty:</strong> {currentBarber.specialty}</p>
+                          <p style={{ color: '#d8cfc4', fontSize: '0.8rem', lineHeight: '1.35' }}>{currentBarber.bio}</p>
                         </div>
                       </>
                     ) : (
                       <>
-                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '2.2rem', boxShadow: '0 0 28px rgba(213,163,83,0.4)' }}>✂️</div>
-                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>ANY MASTER BARBER</h3>
-                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.85rem', color: '#a89a8a', marginBottom: '16px' }}>We will assign the first available master barber upon arrival.</p>
+                        <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px', fontSize: '1.9rem', boxShadow: '0 0 24px rgba(213,163,83,0.4)' }}>✂️</div>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>ANY MASTER BARBER</h3>
+                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '12px' }}>We will assign the first available master barber upon arrival.</p>
                       </>
                     )}
                   </div>
 
                   {/* Preferred Barber Switcher */}
-                  <div style={{ marginBottom: '18px' }}>
-                    <label style={{ display: 'block', fontSize: '0.75rem', color: '#d5a353', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ display: 'block', fontSize: '0.72rem', color: '#d5a353', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
                       Change Preferred Barber:
                     </label>
                     <select
@@ -326,7 +326,7 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                           if (b) setSelectedStaff(b);
                         }
                       }}
-                      style={{ fontSize: '0.9rem', padding: '10px 14px' }}
+                      style={{ fontSize: '0.85rem', padding: '9px 12px' }}
                     >
                       <option value="any">✂️ Any Available Master Barber</option>
                       {staffMembers.map((b) => (
@@ -337,7 +337,7 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                     </select>
                   </div>
 
-                  <div style={{ height: '1px', background: 'rgba(213,163,83,0.15)', marginBottom: '18px' }} />
+                  <div style={{ height: '1px', background: 'rgba(213,163,83,0.15)', marginBottom: '14px' }} />
 
                   {/* Booking Form */}
                   <form onSubmit={handleSubmit}>

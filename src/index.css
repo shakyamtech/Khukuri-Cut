@@ -1250,6 +1250,32 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   }
 }
 
+/* Dedicated 14" & 15.6" Laptop Display Modal Fitting */
+.modal_content {
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(213, 163, 83, 0.4) transparent;
+}
+
+.modal_content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.modal_content::-webkit-scrollbar-track {
+  background: rgba(20, 16, 14, 0.6);
+  border-radius: 4px;
+}
+
+.modal_content::-webkit-scrollbar-thumb {
+  background: rgba(213, 163, 83, 0.4);
+  border-radius: 4px;
+}
+
+.modal_content::-webkit-scrollbar-thumb:hover {
+  background: #d5a353;
+}
+
 /* Mobile Devices & Small Tablets (max-width: 768px) */
 @media (max-width: 768px) {
   .top_panel_inner {
