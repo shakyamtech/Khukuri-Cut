@@ -97,6 +97,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export const AdminDashboard: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [dateFilter, setDateFilter] = useState<string>('all');
 
   useEffect(() => {
     setAppointments(getAppointments());
@@ -111,7 +112,12 @@ export const AdminDashboard: React.FC = () => {
     .filter((a) => a.status === 'completed')
     .reduce((sum, a) => sum + (SERVICE_PRICES[a.service] || 0), 0);
 
-  const recentAppts = appointments.slice(0, 5);
+  const filteredAppts = appointments.filter((a) => {
+    if (dateFilter === 'all') return true;
+    return a.date === dateFilter;
+  });
+
+  const recentAppts = filteredAppts.slice(0, 10);
 
   // Simple bar chart data (last 7 services booked by type)
   const serviceCount: Record<string, number> = {};
@@ -254,10 +260,78 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Recent Appointments */}
       <div style={panelStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div style={panelHeader}>
-            <CalendarCheck size={16} color="#d5a353" />
-            <span style={panelTitle}>Recent Appointments ({appointments.length})</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px', borderBottom: '1px solid rgba(213,163,83,0.12)', paddingBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <div style={panelHeader}>
+              <CalendarCheck size={16} color="#d5a353" />
+              <span style={panelTitle}>Recent Appointments ({filteredAppts.length})</span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginLeft: '8px' }}>
+              <button
+                onClick={() => setDateFilter('all')}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: dateFilter === 'all' ? 800 : 600,
+                  background: dateFilter === 'all' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+                  color: dateFilter === 'all' ? '#191514' : '#a89a8a',
+                  border: '1px solid rgba(213,163,83,0.25)',
+                  cursor: 'pointer',
+                }}
+              >
+                All Dates
+              </button>
+
+              <button
+                onClick={() => setDateFilter('2025-08-15')}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: dateFilter === '2025-08-15' ? 800 : 600,
+                  background: dateFilter === '2025-08-15' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+                  color: dateFilter === '2025-08-15' ? '#191514' : '#a89a8a',
+                  border: '1px solid rgba(213,163,83,0.25)',
+                  cursor: 'pointer',
+                }}
+              >
+                📅 Today (Aug 15)
+              </button>
+
+              <button
+                onClick={() => setDateFilter('2025-08-16')}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  fontWeight: dateFilter === '2025-08-16' ? 800 : 600,
+                  background: dateFilter === '2025-08-16' ? 'linear-gradient(135deg, #d5a353, #b8863b)' : 'rgba(255,255,255,0.05)',
+                  color: dateFilter === '2025-08-16' ? '#191514' : '#a89a8a',
+                  border: '1px solid rgba(213,163,83,0.25)',
+                  cursor: 'pointer',
+                }}
+              >
+                ⏩ Tomorrow (Aug 16)
+              </button>
+
+              <input
+                type="date"
+                value={dateFilter !== 'all' && dateFilter !== '2025-08-15' && dateFilter !== '2025-08-16' ? dateFilter : ''}
+                onChange={(e) => setDateFilter(e.target.value || 'all')}
+                style={{
+                  padding: '3px 8px',
+                  borderRadius: '16px',
+                  fontSize: '0.75rem',
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid rgba(213,163,83,0.35)',
+                  color: '#d5a353',
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              />
+            </div>
           </div>
 
           {appointments.length > 0 && (
