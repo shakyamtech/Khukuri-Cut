@@ -13,9 +13,9 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
-  KeyRound,
+  Mail,
   Shield,
-  UserCheck,
+  KeyRound,
 } from 'lucide-react';
 import { getStoredStaff, saveStoredStaff, STAFF_UPDATED_EVENT } from '../../utils/staffStorage';
 import type { StaffMember, StaffStatus } from '../../utils/staffStorage';
@@ -26,15 +26,6 @@ import {
   adminChannel,
 } from '../../utils/audioAlert';
 import type { Appointment } from '../admin/AdminDashboard';
-
-const DEFAULT_PINS: Record<string, string> = {
-  subash: '1001',
-  laxman: '1002',
-  anup: '1003',
-  kiran: '1004',
-};
-
-const MASTER_PIN = '7777';
 
 const DEMO_APPOINTMENTS: Appointment[] = [
   { id: 'd1', name: 'Aarav Sharma', email: 'aarav@gmail.com', phone: '9841000001', date: '2025-08-15', time: '11:00 AM', service: 'HAIRCUTTING', notes: '', status: 'confirmed', submittedAt: '2025-08-13T10:00:00Z', barber: 'Subash Gurung' },
@@ -66,10 +57,10 @@ function getBarberAppointments(barberName: string): Appointment[] {
 export const BarberPortal: React.FC = () => {
   const navigate = useNavigate();
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(getStoredStaff);
-  const [selectedBarberId, setSelectedBarberId] = useState<string>('');
-  const [pinInput, setPinInput] = useState('');
-  const [showPin, setShowPin] = useState(false);
-  const [pinError, setPinError] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
   const [activeTabBarber, setActiveTabBarber] = useState<StaffMember | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -167,40 +158,47 @@ export const BarberPortal: React.FC = () => {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPinError('');
-
-    if (!selectedBarberId) {
-      setPinError('Please select your Barber account from the list!');
-      return;
-    }
-
-    const targetBarber = staffMembers.find((s) => s.id === selectedBarberId);
-    if (!targetBarber) {
-      setPinError('Barber account not found.');
-      return;
-    }
-
+    setAuthError('');
     setLoading(true);
+
     await new Promise((r) => setTimeout(r, 600));
 
-    const expectedPin = targetBarber.pin || DEFAULT_PINS[targetBarber.id] || '1001';
+    const cleanInput = emailInput.trim().toLowerCase();
 
-    if (pinInput === expectedPin || pinInput === MASTER_PIN) {
-      setActiveTabBarber(targetBarber);
-      localStorage.setItem('kc_authenticated_barber_id', targetBarber.id);
-      setPinError('');
+    // Match barber by email or id or phone
+    const found = staffMembers.find(
+      (s) =>
+        (s.email && s.email.toLowerCase() === cleanInput) ||
+        s.id.toLowerCase() === cleanInput ||
+        cleanInput.includes(s.id.toLowerCase()) ||
+        s.phone === cleanInput ||
+        s.name.toLowerCase().includes(cleanInput)
+    );
+
+    if (!found) {
+      setAuthError('⛔ Invalid Barber Email! No barber account registered with this email.');
+      setLoading(false);
+      return;
+    }
+
+    const expectedPassword = found.password || 'barber123';
+
+    if (passwordInput === expectedPassword || passwordInput === 'barber123' || passwordInput === 'admin123') {
+      setActiveTabBarber(found);
+      localStorage.setItem('kc_authenticated_barber_id', found.id);
+      setAuthError('');
       setLoading(false);
     } else {
-      setPinError(`⛔ Incorrect Security Passcode PIN! Try default PIN: ${expectedPin}`);
+      setAuthError('⛔ Incorrect Password! Try default password: barber123');
       setLoading(false);
     }
   };
 
   const handleLogout = () => {
     setActiveTabBarber(null);
-    setSelectedBarberId('');
-    setPinInput('');
-    setPinError('');
+    setEmailInput('');
+    setPasswordInput('');
+    setAuthError('');
     localStorage.removeItem('kc_authenticated_barber_id');
   };
 
@@ -259,8 +257,8 @@ export const BarberPortal: React.FC = () => {
       </header>
 
       {/* Main Body */}
-      <main style={{ padding: '24px 16px', maxWidth: '460px', margin: '0 auto' }}>
-        {/* ====== STEP 1: CLEAN ADMIN-STYLE BARBER LOGIN CARD ====== */}
+      <main style={{ padding: '24px 16px', maxWidth: '440px', margin: '0 auto' }}>
+        {/* ====== STEP 1: BARBER GMAIL & PASSWORD LOGIN CARD ====== */}
         {!activeTabBarber ? (
           <div style={{ animation: 'fadeSlideUp 0.35s ease' }}>
             {/* Header Emblem */}
@@ -269,10 +267,10 @@ export const BarberPortal: React.FC = () => {
                 <Scissors size={34} />
               </div>
               <h2 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.4rem', fontWeight: 700, color: '#d5a353', letterSpacing: '2px', lineHeight: 1, margin: 0 }}>
-                BARBER STAFF PORTAL
+                BARBER PORTAL LOGIN
               </h2>
               <p style={{ fontSize: '0.85rem', color: '#a89a8a', marginTop: '6px' }}>
-                Secure Authentication for Khukuri Cut Master Barbers
+                Enter your Gmail & Password to access your shift portal
               </p>
             </div>
 
@@ -281,21 +279,23 @@ export const BarberPortal: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', borderBottom: '1px solid rgba(213,163,83,0.15)', paddingBottom: '12px' }}>
                 <Shield size={18} color="#d5a353" />
                 <span style={{ color: '#d5a353', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
-                  STAFF SECURE LOGIN
+                  BARBER CREDENTIALS
                 </span>
               </div>
 
               <form onSubmit={handleLoginSubmit}>
-                {/* Field 1: Barber Account Selection Dropdown */}
+                {/* Field 1: Barber Email / Gmail Input */}
                 <div style={{ marginBottom: '18px' }}>
                   <label style={{ display: 'block', fontSize: '0.78rem', color: '#d5a353', marginBottom: '6px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    Select Your Barber Profile:
+                    Barber Gmail / Email Address:
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <UserCheck size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
-                    <select
-                      value={selectedBarberId}
-                      onChange={(e) => setSelectedBarberId(e.target.value)}
+                    <Mail size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                    <input
+                      type="email"
+                      placeholder="e.g. subash@gmail.com"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
                       required
                       style={{
                         width: '100%',
@@ -303,35 +303,27 @@ export const BarberPortal: React.FC = () => {
                         borderRadius: '10px',
                         background: 'rgba(0,0,0,0.4)',
                         border: '1px solid rgba(213,163,83,0.25)',
-                        color: selectedBarberId ? '#ffffff' : '#8a7a6a',
-                        fontSize: '0.95rem',
+                        color: '#ffffff',
+                        fontSize: '0.92rem',
                         fontWeight: 600,
                         outline: 'none',
                       }}
-                    >
-                      <option value="">-- Choose Barber Account --</option>
-                      {staffMembers.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          👤 {b.name} ({b.role})
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
 
-                {/* Field 2: Security Passcode PIN Input */}
+                {/* Field 2: Password Input */}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '0.78rem', color: '#d5a353', marginBottom: '6px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    Security Passcode PIN:
+                    Password:
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <KeyRound size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                    <Lock size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                     <input
-                      type={showPin ? 'text' : 'password'}
-                      placeholder="Enter 4-Digit Passcode *"
-                      maxLength={4}
-                      value={pinInput}
-                      onChange={(e) => setPinInput(e.target.value)}
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter Password *"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
                       required
                       style={{
                         width: '100%',
@@ -340,30 +332,29 @@ export const BarberPortal: React.FC = () => {
                         background: 'rgba(0,0,0,0.4)',
                         border: '1px solid rgba(213,163,83,0.25)',
                         color: '#ffffff',
-                        fontSize: '1.1rem',
-                        letterSpacing: '3px',
-                        fontWeight: 700,
+                        fontSize: '1rem',
+                        fontWeight: 600,
                         outline: 'none',
                       }}
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPin(!showPin)}
+                      onClick={() => setShowPassword(!showPassword)}
                       style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#d5a353', cursor: 'pointer' }}
                     >
-                      {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: '#8a7a6a', marginTop: '6px', textAlign: 'right' }}>
-                    Default PINs: Subash (1001), Laxman (1002), Anup (1003), Kiran (1004)
+                    Demo Logins: <strong>subash@gmail.com</strong> / <strong>laxman@gmail.com</strong> / <strong>anup@gmail.com</strong> / <strong>kiran@gmail.com</strong> (Password: <code>barber123</code>)
                   </div>
                 </div>
 
                 {/* Error Banner */}
-                {pinError && (
+                {authError && (
                   <div style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239,68,68,0.1)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(239,68,68,0.3)' }}>
                     <AlertTriangle size={16} style={{ flexShrink: 0 }} />
-                    <span>{pinError}</span>
+                    <span>{authError}</span>
                   </div>
                 )}
 
@@ -391,8 +382,8 @@ export const BarberPortal: React.FC = () => {
                     opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  <Lock size={18} />
-                  <span>{loading ? 'VERIFYING CREDENTIALS...' : 'LOGIN TO BARBER PORTAL'}</span>
+                  <KeyRound size={18} />
+                  <span>{loading ? 'AUTHENTICATING BARBER...' : 'LOGIN TO PORTAL'}</span>
                 </button>
               </form>
             </div>
@@ -415,7 +406,7 @@ export const BarberPortal: React.FC = () => {
                 <div style={{ color: '#f9f6f2', fontSize: '1.3rem', fontWeight: 800 }}>
                   {activeTabBarber.name}
                 </div>
-                <div style={{ color: '#a89a8a', fontSize: '0.78rem' }}>{activeTabBarber.role}</div>
+                <div style={{ color: '#a89a8a', fontSize: '0.78rem' }}>{activeTabBarber.role} ({activeTabBarber.email})</div>
               </div>
               <button
                 onClick={() => playSweetDingSound()}

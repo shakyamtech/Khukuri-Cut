@@ -17,6 +17,8 @@ export interface StaffMember {
   color: string;
   initials: string;
   pin?: string;
+  email?: string;
+  password?: string;
 }
 
 export const DEFAULT_STAFF: StaffMember[] = [
@@ -37,6 +39,8 @@ export const DEFAULT_STAFF: StaffMember[] = [
     color: '#d5a353',
     initials: 'SG',
     pin: '1001',
+    email: 'subash@gmail.com',
+    password: 'barber123',
   },
   {
     id: 'laxman',
@@ -54,6 +58,8 @@ export const DEFAULT_STAFF: StaffMember[] = [
     totalCuts: 2100,
     color: '#3b82f6',
     initials: 'LS',
+    email: 'laxman@gmail.com',
+    password: 'barber123',
   },
   {
     id: 'anup',
@@ -71,6 +77,27 @@ export const DEFAULT_STAFF: StaffMember[] = [
     totalCuts: 1500,
     color: '#a855f7',
     initials: 'AT',
+    email: 'anup@gmail.com',
+    password: 'barber123',
+  },
+  {
+    id: 'kiran',
+    name: 'Kiran Sharma',
+    role: 'Master Barber & Stylist',
+    image: '/images/barber_1.png',
+    experience: '7 Years Experience',
+    specialty: 'Precision Fades & Scissor Styling',
+    bio: 'Kiran is passionate about traditional barbershop culture and luxury grooming.',
+    status: 'available',
+    statusNote: 'Available Now',
+    phone: '9841111004',
+    instagram: '@kiran_cuts',
+    rating: 4.9,
+    totalCuts: 1800,
+    color: '#22c55e',
+    initials: 'KS',
+    email: 'kiran@gmail.com',
+    password: 'barber123',
   },
 ];
 
