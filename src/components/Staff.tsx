@@ -221,7 +221,7 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                       }}
                     >
                       <Calendar size={16} />
-                      <span>BOOK APPOINTMENT</span>
+                      <span>{barber.status === 'busy' ? '⏳ RESERVE NEXT TURN' : 'BOOK APPOINTMENT'}</span>
                       <ExternalLink size={14} />
                     </button>
                   </div>
@@ -298,6 +298,14 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                           <p style={{ color: '#d5a353', marginBottom: '2px', fontWeight: 600 }}>Specialty: {currentBarber.specialty}</p>
                           <p style={{ color: '#d8cfc4', fontSize: '0.8rem', lineHeight: '1.35' }}>{currentBarber.bio}</p>
                         </div>
+
+                        {/* In-Session Next Turn Notice Banner */}
+                        {currentBarber.status === 'busy' && (
+                          <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#ff8a8a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', marginBottom: '12px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                            <Clock size={14} color="#ff8a8a" />
+                            <span><strong>{currentBarber.name}</strong> is currently cutting hair. Booking now reserves your spot <strong>RIGHT AFTER</strong> his current session!</span>
+                          </div>
+                        )}
                       </>
                     ) : (
                       <>
@@ -442,18 +450,22 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         fontWeight: 800,
                         fontFamily: "'Teko', sans-serif",
                         letterSpacing: '1.2px',
-                        background: 'linear-gradient(135deg, #d5a353, #b8863b)',
-                        color: '#191514',
+                        background: currentBarber?.status === 'busy' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #d5a353, #b8863b)',
+                        color: currentBarber?.status === 'busy' ? '#ffffff' : '#191514',
                         border: 'none',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        boxShadow: '0 4px 15px rgba(213,163,83,0.35)',
+                        boxShadow: currentBarber?.status === 'busy' ? '0 4px 15px rgba(239,68,68,0.4)' : '0 4px 15px rgba(213,163,83,0.35)',
                         transition: 'all 0.25s ease',
                         textTransform: 'uppercase',
                       }}
                     >
                       <Calendar size={15} />
-                      <span>CONFIRM APPOINTMENT BOOKING</span>
+                      <span>
+                        {currentBarber?.status === 'busy'
+                          ? '⏳ RESERVE NEXT TURN IN QUEUE'
+                          : 'CONFIRM APPOINTMENT BOOKING'}
+                      </span>
                     </button>
                   </form>
                 </>
