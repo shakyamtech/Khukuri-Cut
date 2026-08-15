@@ -66,7 +66,7 @@ const StatCard: React.FC<{
   color: string;
   glow: string;
 }> = ({ label, value, sub, icon: Icon, color, glow }) => (
-  <div style={{ ...cardStyles.card, boxShadow: `0 8px 32px ${glow}` }}>
+  <div className="hover-card-lift" style={{ ...cardStyles.card, boxShadow: `0 8px 32px ${glow}`, cursor: 'pointer' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
       <div>
         <div style={cardStyles.label}>{label}</div>
