@@ -15,8 +15,10 @@ import {
 } from 'lucide-react';
 import {
   playSweetDingSound,
+  playCashRegisterSound,
   APPOINTMENT_EVENT_CREATED,
   APPOINTMENT_EVENT_UPDATED,
+  APPOINTMENT_EVENT_CUT_COMPLETED,
   adminChannel,
 } from '../../utils/audioAlert';
 import type { Appointment } from './AdminDashboard';
@@ -43,6 +45,12 @@ interface AppointmentToast {
   service: string;
 }
 
+interface PaymentToast {
+  name: string;
+  service: string;
+  barber?: string;
+}
+
 function getPendingCount(): number {
   try {
     const saved = localStorage.getItem('kc_appointments');
@@ -61,6 +69,7 @@ export const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pendingCount, setPendingCount] = useState<number>(getPendingCount);
   const [toastAlert, setToastAlert] = useState<AppointmentToast | null>(null);
+  const [paymentAlert, setPaymentAlert] = useState<PaymentToast | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('kc_admin_auth');
@@ -81,22 +90,38 @@ export const AdminLayout: React.FC = () => {
       setTimeout(() => setToastAlert(null), 4500);
     };
 
+    const triggerPaymentAlert = (name: string, service: string, barber?: string) => {
+      updateCount();
+      playCashRegisterSound();
+      setPaymentAlert({ name, service, barber });
+      setTimeout(() => setPaymentAlert(null), 7000);
+    };
+
     const handleNewAppointment = (e: Event) => {
       const detail = (e as CustomEvent)?.detail;
       triggerAlert(detail?.name || 'New Client', detail?.service || 'Appointment');
     };
 
-    // Listen to Cross-Tab BroadcastChannel messages (from Customer booking tab)
+    const handleCutCompleted = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      triggerPaymentAlert(detail?.name || 'Client', detail?.service || 'Haircut', detail?.barber);
+    };
+
+    // Listen to Cross-Tab BroadcastChannel messages (from Barber portal & Customer booking tab)
     if (adminChannel) {
       adminChannel.onmessage = (evt) => {
         if (evt.data?.type === 'NEW_BOOKING') {
           const appt = evt.data.appointment;
           triggerAlert(appt?.name || 'New Client', appt?.service || 'Appointment');
+        } else if (evt.data?.type === 'CUT_COMPLETED') {
+          const appt = evt.data.appointment;
+          triggerPaymentAlert(appt?.name || 'Client', appt?.service || 'Haircut', appt?.barber);
         }
       };
     }
 
     window.addEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
+    window.addEventListener(APPOINTMENT_EVENT_CUT_COMPLETED, handleCutCompleted);
     window.addEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
     window.addEventListener('storage', updateCount);
 
@@ -105,6 +130,7 @@ export const AdminLayout: React.FC = () => {
         adminChannel.onmessage = null;
       }
       window.removeEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
+      window.removeEventListener(APPOINTMENT_EVENT_CUT_COMPLETED, handleCutCompleted);
       window.removeEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
       window.removeEventListener('storage', updateCount);
     };
@@ -296,28 +322,91 @@ export const AdminLayout: React.FC = () => {
             zIndex: 9999,
             background: 'linear-gradient(135deg, #2b2118, #18130f)',
             border: '1.5px solid #d5a353',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(213,163,83,0.3)',
-            borderRadius: '14px',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.9), 0 0 24px rgba(213,163,83,0.4)',
+            borderRadius: '16px',
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: '14px',
-            animation: 'toastSlideIn 0.35s ease',
-            maxWidth: '380px',
+            animation: 'fadeSlideUp 0.35s ease',
+            maxWidth: '420px',
           }}
         >
-          <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 0 14px rgba(213,163,83,0.5)' }}>
-            <Bell size={20} color="#191514" />
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #d5a353, #b8863b)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: '0 0 16px rgba(213,163,83,0.5)',
+            }}
+          >
+            <Bell size={22} color="#191514" />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#d5a353', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
-              🔔 NEW APPOINTMENT RECEIVED!
+            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#d5a353', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              🔔 NEW BOOKING RECEIVED!
             </div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f9f6f2', marginTop: '2px' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f9f6f2', marginTop: '2px' }}>
               {toastAlert.name}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#a89a8a' }}>
-              Booked: <span style={{ color: '#d5a353' }}>{toastAlert.service}</span>
+              Booked: <span style={{ color: '#d5a353', fontWeight: 600 }}>{toastAlert.service}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cash Register Payment Alert Popup when Barber Marks Cut Completed */}
+      {paymentAlert && (
+        <div
+          onClick={() => navigate('/admin/appointments')}
+          style={{
+            position: 'fixed',
+            top: '84px',
+            right: '24px',
+            zIndex: 9999,
+            background: 'linear-gradient(135deg, #1c2b18, #111e0e)',
+            border: '2px solid #22c55e',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.9), 0 0 30px rgba(34,197,94,0.4)',
+            borderRadius: '16px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+            cursor: 'pointer',
+            animation: 'fadeSlideUp 0.35s ease',
+            maxWidth: '420px',
+          }}
+        >
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: '0 0 16px rgba(34,197,94,0.6)',
+            }}
+          >
+            <span style={{ fontSize: '1.4rem' }}>💰</span>
+          </div>
+          <div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#22c55e', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              💰 GUEST READY FOR PAYMENT AT COUNTER!
+            </div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+              {paymentAlert.name}
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#a89a8a' }}>
+              Barber: <strong style={{ color: '#d5a353' }}>{paymentAlert.barber || 'Master Barber'}</strong> · Service: <strong style={{ color: '#22c55e' }}>{paymentAlert.service}</strong>
             </div>
           </div>
         </div>

@@ -23,6 +23,7 @@ import {
   playSweetDingSound,
   APPOINTMENT_EVENT_CREATED,
   APPOINTMENT_EVENT_UPDATED,
+  notifyCutCompletedCrossTab,
   adminChannel,
 } from '../../utils/audioAlert';
 import type { Appointment } from '../admin/AdminDashboard';
@@ -221,8 +222,26 @@ export const BarberPortal: React.FC = () => {
     try {
       const saved = localStorage.getItem('kc_appointments');
       const real: Appointment[] = saved ? JSON.parse(saved) : [];
-      const updated = real.map((a) => (a.id === id ? { ...a, status: newStatus } : a));
+      let targetAppt: Appointment | undefined;
+
+      const updated = real.map((a) => {
+        if (a.id === id) {
+          targetAppt = { ...a, status: newStatus };
+          return targetAppt;
+        }
+        return a;
+      });
+
       localStorage.setItem('kc_appointments', JSON.stringify(updated));
+
+      // Broadcast cut completed to Reception Cash Counter
+      if (newStatus === 'completed' || (newStatus as string) === 'awaiting_payment') {
+        notifyCutCompletedCrossTab(targetAppt || { id, barber: activeTabBarber?.name });
+
+        // Auto-switch barber back to AVAILABLE for next client
+        handleStatusChange('available');
+      }
+
       if (activeTabBarber) {
         setAppointments(getBarberAppointments(activeTabBarber.name));
       }

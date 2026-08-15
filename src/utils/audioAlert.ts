@@ -2,6 +2,7 @@
 
 export const APPOINTMENT_EVENT_CREATED = 'kc_appointment_created';
 export const APPOINTMENT_EVENT_UPDATED = 'kc_appointment_updated';
+export const APPOINTMENT_EVENT_CUT_COMPLETED = 'kc_appointment_cut_completed';
 
 // Cross-tab communication channel so Admin tab receives notification even when booking happens on Customer tab
 export const adminChannel =
@@ -20,6 +21,20 @@ export const notifyNewBookingCrossTab = (appointmentData: any) => {
     }
   } catch (e) {
     console.error('Error broadcasting booking across tabs', e);
+  }
+};
+
+export const notifyCutCompletedCrossTab = (appointmentData: any) => {
+  try {
+    if (adminChannel) {
+      adminChannel.postMessage({
+        type: 'CUT_COMPLETED',
+        appointment: appointmentData,
+        timestamp: Date.now(),
+      });
+    }
+  } catch (e) {
+    console.error('Error broadcasting cut completed across tabs', e);
   }
 };
 
@@ -120,14 +135,48 @@ export const playSweetDingSound = () => {
 
     // Play all tones
     osc1.start(now);
-    osc1.stop(now + 1.25);
-
+    osc1.stop(now + 1.2);
     osc2.start(now + 0.08);
-    osc2.stop(now + 1.55);
-
+    osc2.stop(now + 1.5);
     osc3.start(now + 0.14);
-    osc3.stop(now + 1.85);
+    osc3.stop(now + 1.8);
   } catch (e) {
-    console.error('Error playing bell chime sound', e);
+    console.error('Error playing chime sound:', e);
+  }
+};
+
+export function playCashRegisterSound(): void {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.9, now);
+    masterGain.connect(ctx.destination);
+
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(1046.5, now);
+    gain1.gain.setValueAtTime(0.7, now);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+    osc1.connect(gain1);
+    gain1.connect(masterGain);
+
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(1567.98, now + 0.06);
+    gain2.gain.setValueAtTime(0.8, now + 0.06);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+    osc2.connect(gain2);
+    gain2.connect(masterGain);
+
+    osc1.start(now);
+    osc1.stop(now + 0.8);
+    osc2.start(now + 0.06);
+    osc2.stop(now + 1.2);
+  } catch (e) {
+    console.error('Error playing cash register sound', e);
   }
 };
