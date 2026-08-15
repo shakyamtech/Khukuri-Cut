@@ -905,54 +905,148 @@ export const BarberPortal: React.FC = () => {
                   )}
 
                   {/* RECENT QUEUE LIST TABLE */}
-                  <div style={{ background: 'rgba(28,22,18,0.95)', border: '1px solid rgba(213,163,83,0.18)', borderRadius: '18px', padding: '20px' }}>
+                  <div style={{ background: 'rgba(28,22,18,0.95)', border: '1px solid rgba(213,163,83,0.18)', borderRadius: '18px', padding: isMobile ? '16px 12px' : '20px' }}>
                     <div style={{ color: '#d5a353', fontSize: '0.9rem', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Calendar size={18} />
                       <span>YOUR CLIENT QUEUE LIST ({appointments.length})</span>
                     </div>
 
-                    <div style={{ overflowX: 'auto' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid rgba(213,163,83,0.12)' }}>
-                            {['Client', 'Service', 'Date & Time', 'Status', 'Actions'].map((h) => (
-                              <th key={h} style={{ color: '#6a5a4a', fontSize: '0.75rem', padding: '10px 14px', textTransform: 'uppercase', letterSpacing: '1px' }}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {appointments.map((appt) => (
-                            <tr key={appt.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                              <td style={{ padding: '12px 14px' }}>
-                                <div style={{ color: '#f9f6f2', fontWeight: 700, fontSize: '0.92rem' }}>{appt.name}</div>
-                                <div style={{ color: '#6a5a4a', fontSize: '0.78rem' }}>{appt.phone}</div>
-                              </td>
-                              <td style={{ padding: '12px 14px', color: '#d5a353', fontWeight: 600, fontSize: '0.85rem' }}>
-                                {appt.service}
-                              </td>
-                              <td style={{ padding: '12px 14px', color: '#d8cfc4', fontSize: '0.85rem' }}>
-                                {appt.date} · {appt.time}
-                              </td>
-                              <td style={{ padding: '12px 14px' }}>
-                                <span style={{ padding: '4px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 700, background: appt.status === 'pending' ? 'rgba(245,158,11,0.15)' : appt.status === 'confirmed' ? 'rgba(59,130,246,0.15)' : 'rgba(34,197,94,0.15)', color: appt.status === 'pending' ? '#f59e0b' : appt.status === 'confirmed' ? '#3b82f6' : '#22c55e', border: '1px solid currentColor' }}>
-                                  {appt.status.toUpperCase()}
-                                </span>
-                              </td>
-                              <td style={{ padding: '12px 14px' }}>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                  <a href={`tel:${appt.phone}`} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid #22c55e', color: '#22c55e', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', textDecoration: 'none', fontWeight: 600 }}>
-                                    Call 📞
-                                  </a>
-                                  <button onClick={() => handleAppointmentStatus(appt.id, 'completed')} style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid #22c55e', color: '#22c55e', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
-                                    Done ✅
-                                  </button>
-                                </div>
-                              </td>
+                    {isMobile ? (
+                      /* MOBILE CARD LIST VIEW */
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {appointments.map((appt) => (
+                          <div
+                            key={appt.id}
+                            style={{
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(213,163,83,0.15)',
+                              borderRadius: '12px',
+                              padding: '14px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '10px',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                              <div>
+                                <div style={{ color: '#f9f6f2', fontWeight: 800, fontSize: '1rem' }}>{appt.name}</div>
+                                <div style={{ color: '#d5a353', fontSize: '0.82rem', fontWeight: 700, marginTop: '2px' }}>✂️ {appt.service}</div>
+                                <div style={{ color: '#8a7a6a', fontSize: '0.78rem', marginTop: '4px' }}>📅 {appt.date} · ⏰ {appt.time}</div>
+                              </div>
+                              <span
+                                style={{
+                                  padding: '4px 10px',
+                                  borderRadius: '12px',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 800,
+                                  background: appt.status === 'pending' ? 'rgba(245,158,11,0.15)' : appt.status === 'confirmed' ? 'rgba(59,130,246,0.15)' : 'rgba(34,197,94,0.15)',
+                                  color: appt.status === 'pending' ? '#f59e0b' : appt.status === 'confirmed' ? '#3b82f6' : '#22c55e',
+                                  border: '1px solid currentColor',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {appt.status.toUpperCase()}
+                              </span>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                              <a
+                                href={`tel:${appt.phone}`}
+                                style={{
+                                  flex: 1,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '6px',
+                                  background: 'rgba(34,197,94,0.12)',
+                                  border: '1px solid rgba(34,197,94,0.4)',
+                                  color: '#22c55e',
+                                  borderRadius: '8px',
+                                  padding: '8px 12px',
+                                  fontSize: '0.8rem',
+                                  textDecoration: 'none',
+                                  fontWeight: 700,
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                <Phone size={14} />
+                                <span>Call</span>
+                              </a>
+
+                              <button
+                                onClick={() => handleAppointmentStatus(appt.id, 'completed')}
+                                style={{
+                                  flex: 1,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '6px',
+                                  background: 'linear-gradient(135deg, #22c55e, #15803d)',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  padding: '8px 12px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  boxShadow: '0 4px 14px rgba(34,197,94,0.3)',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                <CheckCircle size={15} />
+                                <span>Mark Done</span>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      /* DESKTOP TABLE VIEW */
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                          <thead>
+                            <tr style={{ borderBottom: '1px solid rgba(213,163,83,0.12)' }}>
+                              {['Client', 'Service', 'Date & Time', 'Status', 'Actions'].map((h) => (
+                                <th key={h} style={{ color: '#6a5a4a', fontSize: '0.75rem', padding: '10px 14px', textTransform: 'uppercase', letterSpacing: '1px', whiteSpace: 'nowrap' }}>{h}</th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody>
+                            {appointments.map((appt) => (
+                              <tr key={appt.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                                  <div style={{ color: '#f9f6f2', fontWeight: 700, fontSize: '0.92rem' }}>{appt.name}</div>
+                                  <div style={{ color: '#6a5a4a', fontSize: '0.78rem' }}>{appt.phone}</div>
+                                </td>
+                                <td style={{ padding: '12px 14px', color: '#d5a353', fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                                  {appt.service}
+                                </td>
+                                <td style={{ padding: '12px 14px', color: '#d8cfc4', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                                  {appt.date} · {appt.time}
+                                </td>
+                                <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                                  <span style={{ padding: '4px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 700, background: appt.status === 'pending' ? 'rgba(245,158,11,0.15)' : appt.status === 'confirmed' ? 'rgba(59,130,246,0.15)' : 'rgba(34,197,94,0.15)', color: appt.status === 'pending' ? '#f59e0b' : appt.status === 'confirmed' ? '#3b82f6' : '#22c55e', border: '1px solid currentColor' }}>
+                                    {appt.status.toUpperCase()}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                                  <div style={{ display: 'flex', gap: '8px' }}>
+                                    <a href={`tel:${appt.phone}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(34,197,94,0.12)', border: '1px solid #22c55e', color: '#22c55e', borderRadius: '6px', padding: '6px 10px', fontSize: '0.78rem', textDecoration: 'none', fontWeight: 600 }}>
+                                      <Phone size={13} />
+                                      <span>Call</span>
+                                    </a>
+                                    <button onClick={() => handleAppointmentStatus(appt.id, 'completed')} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'linear-gradient(135deg, #22c55e, #15803d)', border: 'none', color: '#ffffff', borderRadius: '6px', padding: '6px 12px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                                      <CheckCircle size={13} />
+                                      <span>Done</span>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
