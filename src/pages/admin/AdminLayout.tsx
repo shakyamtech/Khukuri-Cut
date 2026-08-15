@@ -70,10 +70,21 @@ function getPendingCount(): number {
 export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth > 768 : true);
   const [pendingCount, setPendingCount] = useState<number>(getPendingCount);
   const [toastAlert, setToastAlert] = useState<AppointmentToast | null>(null);
   const [paymentAlert, setPaymentAlert] = useState<PaymentToast | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('kc_admin_auth');
@@ -147,18 +158,39 @@ export const AdminLayout: React.FC = () => {
 
   return (
     <div style={styles.root}>
+      {/* Dark Backdrop Overlay on Mobile when Sidebar Drawer is Open */}
+      {isMobile && sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            zIndex: 9998,
+            backdropFilter: 'blur(5px)',
+          }}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         style={{
           ...styles.sidebar,
-          width: sidebarOpen ? 260 : 70,
-          minWidth: sidebarOpen ? 260 : 70,
+          position: isMobile ? 'fixed' : 'relative',
+          left: isMobile ? (sidebarOpen ? 0 : -280) : 0,
+          top: 0,
+          bottom: 0,
+          zIndex: isMobile ? 9999 : 10,
+          width: sidebarOpen ? 260 : isMobile ? 0 : 70,
+          minWidth: sidebarOpen ? 260 : isMobile ? 0 : 70,
+          boxShadow: isMobile && sidebarOpen ? '10px 0 40px rgba(0,0,0,0.9)' : 'none',
+          transition: 'all 0.3s ease',
         }}
       >
         {/* Sidebar Header */}
         <div style={styles.sidebarHeader}>
           <div
-            onClick={() => navigate('/')}
+            onClick={() => { navigate('/'); if (isMobile) setSidebarOpen(false); }}
             style={{ ...styles.logoWrap, cursor: 'pointer', flex: 1 }}
             title="Go to Main Salon Homepage"
           >
@@ -192,7 +224,7 @@ export const AdminLayout: React.FC = () => {
             return (
               <button
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => { navigate(item.path); if (isMobile) setSidebarOpen(false); }}
                 title={!sidebarOpen ? item.label : undefined}
                 style={{
                   ...styles.navItem,

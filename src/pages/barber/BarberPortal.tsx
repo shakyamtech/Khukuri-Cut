@@ -83,8 +83,19 @@ export const BarberPortal: React.FC = () => {
   const [activeTabBarber, setActiveTabBarber] = useState<StaffMember | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [activeNavTab, setActiveNavTab] = useState<'dashboard' | 'queue' | 'earnings' | 'profile'>('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth > 768 : true);
   const [toastAlert, setToastAlert] = useState<{ name: string; service: string } | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Check saved session on mount
   useEffect(() => {
@@ -419,26 +430,45 @@ export const BarberPortal: React.FC = () => {
         </div>
       ) : (
         /* ====== STEP 2: AUTHENTICATED FULL BARBER DASHBOARD LAYOUT ====== */
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#0f0d0c' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: '#0f0d0c', position: 'relative' }}>
+          {/* Dark Backdrop Overlay on Mobile when Sidebar Drawer is Open */}
+          {isMobile && sidebarOpen && (
+            <div
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.82)',
+                zIndex: 998,
+                backdropFilter: 'blur(5px)',
+              }}
+            />
+          )}
+
           {/* SIDEBAR NAVIGATION MENU */}
           <aside
             style={{
-              width: sidebarOpen ? 260 : 76,
-              minWidth: sidebarOpen ? 260 : 76,
+              position: isMobile ? 'fixed' : 'relative',
+              left: isMobile ? (sidebarOpen ? 0 : -280) : 0,
+              top: 0,
+              bottom: 0,
+              zIndex: isMobile ? 9999 : 10,
+              width: sidebarOpen ? 260 : isMobile ? 0 : 76,
+              minWidth: sidebarOpen ? 260 : isMobile ? 0 : 76,
               background: 'linear-gradient(180deg, #18130f 0%, #120e0b 100%)',
               borderRight: '1px solid rgba(213,163,83,0.15)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
               transition: 'all 0.3s ease',
-              zIndex: 10,
+              boxShadow: isMobile && sidebarOpen ? '10px 0 40px rgba(0,0,0,0.9)' : 'none',
             }}
           >
             <div>
               {/* Sidebar Header Logo & Barber Avatar */}
               <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(213,163,83,0.12)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div
-                  onClick={() => navigate('/')}
+                  onClick={() => { navigate('/'); if (isMobile) setSidebarOpen(false); }}
                   style={{ width: 44, height: 44, borderRadius: '50%', border: '2px solid #d5a353', overflow: 'hidden', flexShrink: 0, cursor: 'pointer', boxShadow: '0 0 12px rgba(213,163,83,0.3)' }}
                   title="Go to Homepage"
                 >
@@ -457,7 +487,7 @@ export const BarberPortal: React.FC = () => {
               {/* Navigation Menu Items */}
               <nav style={{ padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
-                  onClick={() => setActiveNavTab('dashboard')}
+                  onClick={() => { setActiveNavTab('dashboard'); if (isMobile) setSidebarOpen(false); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -478,7 +508,7 @@ export const BarberPortal: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setActiveNavTab('queue')}
+                  onClick={() => { setActiveNavTab('queue'); if (isMobile) setSidebarOpen(false); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -506,7 +536,7 @@ export const BarberPortal: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setActiveNavTab('earnings')}
+                  onClick={() => { setActiveNavTab('earnings'); if (isMobile) setSidebarOpen(false); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -527,7 +557,7 @@ export const BarberPortal: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setActiveNavTab('profile')}
+                  onClick={() => { setActiveNavTab('profile'); if (isMobile) setSidebarOpen(false); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
