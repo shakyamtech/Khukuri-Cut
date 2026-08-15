@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button className="nav_action_btn" onClick={onOpenSearch} title="Search">
               <Search size={20} />
             </button>
-            <button className="nav_action_btn" onClick={onOpenCart} title="View Cart">
+            <button className="nav_action_btn cart_btn_wrap" onClick={onOpenCart} title="View Cart" style={{ position: 'relative' }}>
               <ShoppingCart size={20} />
               <span className="cart_badge_count">{cartCount}</span>
             </button>

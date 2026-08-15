@@ -216,17 +216,29 @@ button {
   color: var(--color-gold);
 }
 
+.cart_btn_wrap {
+  position: relative !important;
+}
+
 .cart_badge_count {
-  background-color: var(--color-gold);
-  color: var(--color-dark);
-  font-size: 0.85rem;
-  font-weight: 700;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  background: linear-gradient(135deg, #d5a353, #b8863b);
+  color: #191514;
+  font-size: 0.68rem;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(213, 163, 83, 0.4);
+  border: 1.5px solid #14100e;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .menu_toggle_icon {
