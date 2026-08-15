@@ -829,14 +829,14 @@ export const BarberPortal: React.FC = () => {
                   {/* ACTIVE CHAIR CLIENT HERO CARD */}
                   {activeChairClient ? (
                     <div style={{ background: 'linear-gradient(135deg, #2a2016, #1b140e)', border: '2px solid #d5a353', borderRadius: '18px', padding: '20px', boxShadow: '0 12px 40px rgba(0,0,0,0.7)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(213,163,83,0.2)', paddingBottom: '10px' }}>
+                      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '14px', borderBottom: '1px solid rgba(213,163,83,0.2)', paddingBottom: '10px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444', animation: 'pulseGlow 1.5s infinite' }} />
-                          <span style={{ color: '#d5a353', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
-                            💈 CLIENT CURRENTLY IN CHAIR / NEXT IN LINE
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', animation: 'pulseGlow 1.5s infinite', flexShrink: 0 }} />
+                          <span style={{ color: '#d5a353', fontSize: isMobile ? '0.74rem' : '0.8rem', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                            💈 {isMobile ? 'ACTIVE CLIENT IN CHAIR' : 'CLIENT CURRENTLY IN CHAIR / NEXT IN LINE'}
                           </span>
                         </div>
-                        <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 700 }}>
+                        <span style={{ fontSize: '0.7rem', padding: '3px 10px', borderRadius: '12px', background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 800, whiteSpace: 'nowrap', alignSelf: isMobile ? 'flex-start' : 'center' }}>
                           PENDING CUT
                         </span>
                       </div>
