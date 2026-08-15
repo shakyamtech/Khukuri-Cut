@@ -54,9 +54,13 @@ interface PaymentToast {
 function getPendingCount(): number {
   try {
     const saved = localStorage.getItem('kc_appointments');
-    const real: Appointment[] = saved ? JSON.parse(saved) : [];
-    const all = [...real, ...DEMO_APPOINTMENTS];
-    return all.filter((a) => a.status === 'pending').length;
+    if (saved !== null) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((a: Appointment) => a.status === 'pending').length;
+      }
+    }
+    return DEMO_APPOINTMENTS.filter((a) => a.status === 'pending').length;
   } catch (e) {
     console.error('Error parsing appointments count', e);
     return 0;
