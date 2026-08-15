@@ -486,7 +486,7 @@ export const BarberPortal: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 14px rgba(213,163,83,0.35)',
+                    boxShadow: 'none',
                     flexShrink: 0,
                   }}
                 >

@@ -64,9 +64,8 @@ const StatCard: React.FC<{
   sub: string;
   icon: React.ElementType;
   color: string;
-  glow: string;
-}> = ({ label, value, sub, icon: Icon, color, glow }) => (
-  <div className="hover-card-lift" style={{ ...cardStyles.card, boxShadow: `0 8px 32px ${glow}`, cursor: 'pointer' }}>
+}> = ({ label, value, sub, icon: Icon, color }) => (
+  <div className="hover-card-lift" style={{ ...cardStyles.card, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', cursor: 'pointer' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
       <div>
         <div style={cardStyles.label}>{label}</div>
@@ -172,10 +171,10 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Stats Row - 2x2 Grid on Mobile */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: isMobile ? '10px' : '16px' }}>
-        <StatCard label="Total Bookings" value={total} sub="All time" icon={CalendarCheck} color="#d5a353" glow="rgba(213,163,83,0.12)" />
-        <StatCard label="Pending" value={pending} sub="Awaiting confirmation" icon={Clock} color="#f59e0b" glow="rgba(245,158,11,0.1)" />
-        <StatCard label="Confirmed" value={confirmed} sub="Upcoming sessions" icon={CheckCircle} color="#3b82f6" glow="rgba(59,130,246,0.1)" />
-        <StatCard label="Revenue (Done)" value={`Rs ${revenue.toLocaleString()}`} sub={`${completed} cuts done`} icon={TrendingUp} color="#22c55e" glow="rgba(34,197,94,0.1)" />
+        <StatCard label="Total Bookings" value={total} sub="All time" icon={CalendarCheck} color="#d5a353" />
+        <StatCard label="Pending" value={pending} sub="Awaiting confirmation" icon={Clock} color="#f59e0b" />
+        <StatCard label="Confirmed" value={confirmed} sub="Upcoming sessions" icon={CheckCircle} color="#3b82f6" />
+        <StatCard label="Revenue (Done)" value={`Rs ${revenue.toLocaleString()}`} sub={`${completed} cuts done`} icon={TrendingUp} color="#22c55e" />
       </div>
 
       {/* Charts + Recent */}
