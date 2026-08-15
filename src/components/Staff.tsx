@@ -431,9 +431,31 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
                         I agree that my booking data is collected and stored for appointment processing.
                       </label>
                     </div>
-                    <button type="submit" className="sc_button" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '11px 20px', fontSize: '1.05rem' }}>
-                      <Calendar size={16} />
-                      CONFIRM APPOINTMENT BOOKING
+                    <button
+                      type="submit"
+                      style={{
+                        width: '100%',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '9px 18px',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        fontFamily: "'Teko', sans-serif",
+                        letterSpacing: '1.2px',
+                        background: 'linear-gradient(135deg, #d5a353, #b8863b)',
+                        color: '#191514',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 15px rgba(213,163,83,0.35)',
+                        transition: 'all 0.25s ease',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      <Calendar size={15} />
+                      <span>CONFIRM APPOINTMENT BOOKING</span>
                     </button>
                   </form>
                 </>
