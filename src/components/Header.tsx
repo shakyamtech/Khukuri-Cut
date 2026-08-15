@@ -76,13 +76,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="nav_right_actions">
-            <button
-              className="nav_action_btn"
-              onClick={() => navigate('/barber')}
-              title="Barber & Staff Portal"
-              style={{ borderColor: 'rgba(213,163,83,0.35)', background: 'rgba(213,163,83,0.1)' }}
-            >
-              <User size={18} color="#d5a353" />
+            <button className="nav_action_btn" onClick={() => navigate('/barber')} title="Barber & Staff Portal">
+              <User size={20} />
             </button>
             <button className="nav_action_btn" onClick={onOpenSearch} title="Search">
               <Search size={20} />
