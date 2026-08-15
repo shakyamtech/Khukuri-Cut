@@ -138,6 +138,25 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Auto-slide carousel every 4 seconds
+  useEffect(() => {
+    if (modalOpen || isHovered || staffMembers.length <= 1) return;
+
+    const interval = setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 25) {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        scrollRef.current.scrollBy({ left: 360, behavior: 'smooth' });
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [modalOpen, isHovered, staffMembers.length]);
+
   const currentBarber = staffMembers.find((s) => s.id === selectedBarberId) || selectedStaff;
 
   return (
@@ -169,6 +188,8 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
           <div
             ref={scrollRef}
             className="staff_carousel_container"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
             {staffMembers.map((barber) => (
               <div className="staff_card" key={barber.id} onClick={() => openBookingModal(barber)} style={{ cursor: 'pointer' }}>
