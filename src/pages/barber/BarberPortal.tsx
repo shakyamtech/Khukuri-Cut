@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  Scissors,
   Phone,
   Calendar,
   Volume2,
@@ -13,7 +14,8 @@ import {
   EyeOff,
   AlertTriangle,
   KeyRound,
-  CheckCircle,
+  Shield,
+  UserCheck,
 } from 'lucide-react';
 import { getStoredStaff, saveStoredStaff, STAFF_UPDATED_EVENT } from '../../utils/staffStorage';
 import type { StaffMember, StaffStatus } from '../../utils/staffStorage';
@@ -64,10 +66,11 @@ function getBarberAppointments(barberName: string): Appointment[] {
 export const BarberPortal: React.FC = () => {
   const navigate = useNavigate();
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(getStoredStaff);
-  const [selectedBarber, setSelectedBarber] = useState<StaffMember | null>(null);
+  const [selectedBarberId, setSelectedBarberId] = useState<string>('');
   const [pinInput, setPinInput] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [pinError, setPinError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [activeTabBarber, setActiveTabBarber] = useState<StaffMember | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [toastAlert, setToastAlert] = useState<{ name: string; service: string } | null>(null);
@@ -162,33 +165,40 @@ export const BarberPortal: React.FC = () => {
     };
   }, [activeTabBarber]);
 
-  const handleSelectBarberCard = (barber: StaffMember) => {
-    setSelectedBarber(barber);
-    setPinInput('');
-    setPinError('');
-  };
-
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedBarber) {
-      setPinError('Please tap your barber profile photo first!');
+    setPinError('');
+
+    if (!selectedBarberId) {
+      setPinError('Please select your Barber account from the list!');
       return;
     }
 
-    const expectedPin = selectedBarber.pin || DEFAULT_PINS[selectedBarber.id] || '1001';
+    const targetBarber = staffMembers.find((s) => s.id === selectedBarberId);
+    if (!targetBarber) {
+      setPinError('Barber account not found.');
+      return;
+    }
+
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 600));
+
+    const expectedPin = targetBarber.pin || DEFAULT_PINS[targetBarber.id] || '1001';
 
     if (pinInput === expectedPin || pinInput === MASTER_PIN) {
-      setActiveTabBarber(selectedBarber);
-      localStorage.setItem('kc_authenticated_barber_id', selectedBarber.id);
+      setActiveTabBarber(targetBarber);
+      localStorage.setItem('kc_authenticated_barber_id', targetBarber.id);
       setPinError('');
+      setLoading(false);
     } else {
-      setPinError(`⛔ Invalid PIN! Expected PIN for ${selectedBarber.name} or Master PIN.`);
+      setPinError(`⛔ Incorrect Security Passcode PIN! Try default PIN: ${expectedPin}`);
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
     setActiveTabBarber(null);
-    setSelectedBarber(null);
+    setSelectedBarberId('');
     setPinInput('');
     setPinError('');
     localStorage.removeItem('kc_authenticated_barber_id');
@@ -236,7 +246,7 @@ export const BarberPortal: React.FC = () => {
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#d5a353', letterSpacing: '1px' }}>
               KHUKURI CUT
             </div>
-            <div style={{ fontSize: '0.7rem', color: '#8a7a6a' }}>Barber Security Portal</div>
+            <div style={{ fontSize: '0.7rem', color: '#8a7a6a' }}>Barber Portal</div>
           </div>
         </div>
 
@@ -249,124 +259,118 @@ export const BarberPortal: React.FC = () => {
       </header>
 
       {/* Main Body */}
-      <main style={{ padding: '20px 16px', maxWidth: '540px', margin: '0 auto' }}>
-        {/* ====== STEP 1: BARBER SECURE AUTHENTICATION SCREEN ====== */}
+      <main style={{ padding: '24px 16px', maxWidth: '460px', margin: '0 auto' }}>
+        {/* ====== STEP 1: CLEAN ADMIN-STYLE BARBER LOGIN CARD ====== */}
         {!activeTabBarber ? (
-          <div>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 0 25px rgba(213,163,83,0.35)' }}>
-                <Lock size={28} />
+          <div style={{ animation: 'fadeSlideUp 0.35s ease' }}>
+            {/* Header Emblem */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', boxShadow: '0 0 30px rgba(213,163,83,0.4)' }}>
+                <Scissors size={34} />
               </div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#d5a353', letterSpacing: '1px' }}>
-                BARBER AUTHENTICATION
+              <h2 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.4rem', fontWeight: 700, color: '#d5a353', letterSpacing: '2px', lineHeight: 1, margin: 0 }}>
+                BARBER STAFF PORTAL
               </h2>
-              <p style={{ fontSize: '0.85rem', color: '#a89a8a', marginTop: '4px' }}>
-                Tap your profile & enter your 4-Digit Security Passcode PIN to access your mobile portal.
+              <p style={{ fontSize: '0.85rem', color: '#a89a8a', marginTop: '6px' }}>
+                Secure Authentication for Khukuri Cut Master Barbers
               </p>
             </div>
 
-            {/* Barber Cards Selector */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-              {staffMembers.map((barber) => {
-                const isSelected = selectedBarber?.id === barber.id;
-                return (
-                  <div
-                    key={barber.id}
-                    onClick={() => handleSelectBarberCard(barber)}
-                    style={{
-                      background: isSelected ? 'linear-gradient(145deg, #2b2118, #1e1711)' : 'linear-gradient(145deg, #1a1410, #15110e)',
-                      border: isSelected ? '2px solid #d5a353' : '1px solid rgba(213,163,83,0.18)',
-                      borderRadius: '16px',
-                      padding: '14px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '14px',
-                      boxShadow: isSelected ? '0 0 20px rgba(213,163,83,0.3)' : '0 8px 24px rgba(0,0,0,0.4)',
-                      transition: 'all 0.25s ease',
-                      position: 'relative',
-                    }}
-                  >
-                    <div style={{ position: 'relative', width: 52, height: 52, flexShrink: 0 }}>
-                      <img
-                        src={barber.image}
-                        alt={barber.name}
-                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', objectPosition: 'top center', border: isSelected ? '2.5px solid #d5a353' : '2px solid rgba(213,163,83,0.4)' }}
-                      />
-                      <span
-                        style={{
-                          position: 'absolute', bottom: 0, right: 0, width: 12, height: 12, borderRadius: '50%',
-                          background: barber.status === 'available' ? '#22c55e' : barber.status === 'busy' ? '#ef4444' : '#eab308',
-                          border: '2px solid #161210',
-                        }}
-                      />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ color: isSelected ? '#d5a353' : '#f9f6f2', fontWeight: 700, fontSize: '1rem' }}>{barber.name}</div>
-                      <div style={{ color: '#a89a8a', fontSize: '0.75rem' }}>{barber.role}</div>
-                      <div style={{ fontSize: '0.72rem', color: barber.status === 'available' ? '#22c55e' : barber.status === 'busy' ? '#ef4444' : '#eab308', marginTop: 2, fontWeight: 600 }}>
-                        {barber.status === 'available' ? '🟢 Available' : barber.status === 'busy' ? '🔴 In Session' : '🟡 On Break'}
-                      </div>
-                    </div>
+            {/* Login Card Container */}
+            <div style={{ background: 'linear-gradient(145deg, #1f1813, #15110e)', border: '1px solid rgba(213,163,83,0.3)', borderRadius: '20px', padding: '26px', boxShadow: '0 20px 60px rgba(0,0,0,0.8)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', borderBottom: '1px solid rgba(213,163,83,0.15)', paddingBottom: '12px' }}>
+                <Shield size={18} color="#d5a353" />
+                <span style={{ color: '#d5a353', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+                  STAFF SECURE LOGIN
+                </span>
+              </div>
 
-                    {isSelected && (
-                      <CheckCircle size={20} color="#d5a353" />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* SECURE PIN INPUT FORM */}
-            {selectedBarber && (
-              <form onSubmit={handleLoginSubmit} style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1.5px solid #d5a353', borderRadius: '16px', padding: '20px', animation: 'fadeSlideUp 0.3s ease' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', borderBottom: '1px solid rgba(213,163,83,0.2)', paddingBottom: '10px' }}>
-                  <KeyRound size={20} color="#d5a353" />
-                  <div>
-                    <div style={{ color: '#d5a353', fontSize: '0.95rem', fontWeight: 800 }}>ENTER PASSCODE FOR {selectedBarber.name.toUpperCase()}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#a89a8a' }}>Default PINs: Subash (1001), Laxman (1002), Anup (1003), Kiran (1004)</div>
+              <form onSubmit={handleLoginSubmit}>
+                {/* Field 1: Barber Account Selection Dropdown */}
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: '#d5a353', marginBottom: '6px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Select Your Barber Profile:
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <UserCheck size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                    <select
+                      value={selectedBarberId}
+                      onChange={(e) => setSelectedBarberId(e.target.value)}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 14px 12px 42px',
+                        borderRadius: '10px',
+                        background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid rgba(213,163,83,0.25)',
+                        color: selectedBarberId ? '#ffffff' : '#8a7a6a',
+                        fontSize: '0.95rem',
+                        fontWeight: 600,
+                        outline: 'none',
+                      }}
+                    >
+                      <option value="">-- Choose Barber Account --</option>
+                      {staffMembers.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          👤 {b.name} ({b.role})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <div style={{ position: 'relative', marginBottom: '14px' }}>
-                  <input
-                    type={showPin ? 'text' : 'password'}
-                    placeholder="Enter 4-Digit Security PIN *"
-                    maxLength={4}
-                    value={pinInput}
-                    onChange={(e) => setPinInput(e.target.value)}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 42px 12px 14px',
-                      borderRadius: '10px',
-                      background: 'rgba(0,0,0,0.4)',
-                      border: '1px solid rgba(213,163,83,0.3)',
-                      color: '#ffffff',
-                      fontSize: '1.2rem',
-                      letterSpacing: '4px',
-                      textAlign: 'center',
-                      fontWeight: 700,
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPin(!showPin)}
-                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#d5a353', cursor: 'pointer' }}
-                  >
-                    {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                {/* Field 2: Security Passcode PIN Input */}
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '0.78rem', color: '#d5a353', marginBottom: '6px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Security Passcode PIN:
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <KeyRound size={18} color="#d5a353" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                    <input
+                      type={showPin ? 'text' : 'password'}
+                      placeholder="Enter 4-Digit Passcode *"
+                      maxLength={4}
+                      value={pinInput}
+                      onChange={(e) => setPinInput(e.target.value)}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 44px 12px 42px',
+                        borderRadius: '10px',
+                        background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid rgba(213,163,83,0.25)',
+                        color: '#ffffff',
+                        fontSize: '1.1rem',
+                        letterSpacing: '3px',
+                        fontWeight: 700,
+                        outline: 'none',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPin(!showPin)}
+                      style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#d5a353', cursor: 'pointer' }}
+                    >
+                      {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#8a7a6a', marginTop: '6px', textAlign: 'right' }}>
+                    Default PINs: Subash (1001), Laxman (1002), Anup (1003), Kiran (1004)
+                  </div>
                 </div>
 
+                {/* Error Banner */}
                 {pinError && (
-                  <div style={{ color: '#ef4444', fontSize: '0.8rem', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(239,68,68,0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.25)' }}>
-                    <AlertTriangle size={16} />
+                  <div style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239,68,68,0.1)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(239,68,68,0.3)' }}>
+                    <AlertTriangle size={16} style={{ flexShrink: 0 }} />
                     <span>{pinError}</span>
                   </div>
                 )}
 
+                {/* Submit Login Button */}
                 <button
                   type="submit"
+                  disabled={loading}
                   style={{
                     width: '100%',
                     padding: '13px',
@@ -375,26 +379,27 @@ export const BarberPortal: React.FC = () => {
                     background: 'linear-gradient(135deg, #d5a353, #b8863b)',
                     color: '#191514',
                     fontWeight: 800,
-                    fontSize: '1.05rem',
+                    fontSize: '1.1rem',
                     fontFamily: "'Teko', sans-serif",
                     letterSpacing: '1.5px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 18px rgba(213,163,83,0.4)',
+                    cursor: loading ? 'wait' : 'pointer',
+                    boxShadow: '0 4px 20px rgba(213,163,83,0.4)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
+                    opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  <Lock size={16} />
-                  <span>AUTHENTICATE & ENTER PORTAL</span>
+                  <Lock size={18} />
+                  <span>{loading ? 'VERIFYING CREDENTIALS...' : 'LOGIN TO BARBER PORTAL'}</span>
                 </button>
               </form>
-            )}
+            </div>
           </div>
         ) : (
           /* ====== STEP 2: AUTHENTICATED BARBER MOBILE DASHBOARD ====== */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', animation: 'fadeSlideUp 0.35s ease' }}>
             {/* Active Authenticated Profile Banner */}
             <div style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1.5px solid #d5a353', borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 10px 30px rgba(0,0,0,0.6)' }}>
               <img
