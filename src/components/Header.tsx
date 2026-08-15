@@ -19,16 +19,39 @@ export const KhukuriBarberLogo: React.FC<{ size?: number }> = ({ size = 135 }) =
     {/* Center Emblem: Barber Scissors & Razor Blade */}
     <g transform="translate(0, -6)">
       {/* Barber Scissors */}
-      <path d="M 68 138 C 68 147 60 154 50 154 C 40 154 32 147 32 138 C 32 129 40 122 50 122 C 55 122 60 124 63 128 L 95 90 L 63 52 C 60 56 55 58 50 58 C 40 58 32 51 32 42 C 32 33 40 26 50 26 C 60 26 68 33 68 42 C 68 47 66 51 63 54 L 100 95 L 137 54 C 134 51 132 47 132 42 C 132 33 140 26 150 26 C 160 26 168 33 168 42 C 168 51 160 58 150 58 C 145 58 140 56 137 52 L 105 90 L 137 128 C 140 124 145 122 150 122 C 160 122 168 129 168 138 C 168 147 160 154 150 154 C 140 154 132 147 132 138 C 132 133 134 129 137 126 L 100 85 L 63 126 C 66 129 68 133 68 138 Z" fill="#d5a353"/>
+      <g stroke="#d5a353" fill="#d5a353">
+        {/* Left Scissor Loop & Shank */}
+        <circle cx="64" cy="132" r="10" fill="none" strokeWidth="3"/>
+        <path d="M54 137 Q 48 143 44 145" fill="none" strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M70 122 C 73 112, 85 103, 97 93 L 138 52 C 141 49, 143 51, 139 55 L 98 95 L 74 122 Z" strokeWidth="0.5"/>
+
+        {/* Right Scissor Loop & Shank */}
+        <circle cx="136" cy="132" r="10" fill="none" strokeWidth="3"/>
+        <path d="M130 122 C 127 112, 115 103, 103 93 L 62 52 C 59 49, 57 51, 61 55 L 102 95 L 126 122 Z" strokeWidth="0.5"/>
+
+        {/* Screw Pivot */}
+        <circle cx="100" cy="93" r="4.5" fill="#191514" stroke="#d5a353" strokeWidth="2"/>
+      </g>
+
+      {/* Straight Razor Blade in Center */}
+      <g fill="#d5a353">
+        <path d="M 95 46 L 105 46 L 105 120 L 95 120 Z" opacity="0.9"/>
+        <rect x="97" y="54" width="6" height="32" rx="3" fill="#191514"/>
+        <circle cx="100" cy="97" r="3" fill="#191514"/>
+      </g>
     </g>
 
-    {/* ESTD 2024 Arching Ribbon Text */}
-    <path id="curve" d="M 45 152 A 75 75 0 0 0 155 152" fill="transparent"/>
-    <text fill="#d5a353" fontSize="11" fontWeight="700" letterSpacing="3">
-      <textPath href="#curve" startOffset="50%" textAnchor="middle">
-        ESTD · KATHMANDU · 2024
-      </textPath>
-    </text>
+    {/* Side Stars */}
+    <path d="M 32 96 L 34 91 L 39 91 L 35 87 L 37 82 L 32 85 L 27 82 L 29 87 L 25 91 L 30 91 Z" fill="#d5a353"/>
+    <path d="M 168 96 L 170 91 L 175 91 L 171 87 L 173 82 L 168 85 L 163 82 L 165 87 L 161 91 L 166 91 Z" fill="#d5a353"/>
+
+    {/* Premium Gold Ribbon Banner at Bottom for KHUKURI CUT */}
+    <g transform="translate(0, 160)">
+      <rect x="25" y="-13" width="150" height="26" rx="4" fill="#191514" stroke="#d5a353" strokeWidth="2"/>
+      <text x="100" y="4" fill="#d5a353" fontSize="16" fontFamily="Teko" letterSpacing="4" fontWeight="bold" textAnchor="middle">
+        KHUKURI CUT
+      </text>
+    </g>
   </svg>
 );
 
@@ -42,7 +65,8 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <header className="site_header">
+    <header className="top_panel" style={{ backgroundImage: "url('/images/hero_bg.png')" }} id="home">
+      <div className="top_panel_overlay"></div>
       <div className="top_panel_inner">
         {/* Navigation Top Bar */}
         <div className="header_nav_bar">
