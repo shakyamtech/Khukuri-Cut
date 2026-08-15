@@ -105,6 +105,13 @@ const STATUS_COLORS: Record<string, string> = {
 export const AdminDashboard: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [dateFilter, setDateFilter] = useState<string>('all');
+  const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     setAppointments(getAppointments());
@@ -163,12 +170,12 @@ export const AdminDashboard: React.FC = () => {
         </p>
       </div>
 
-      {/* Stats Row */}
-      <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+      {/* Stats Row - 2x2 Grid on Mobile */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: isMobile ? '10px' : '16px' }}>
         <StatCard label="Total Bookings" value={total} sub="All time" icon={CalendarCheck} color="#d5a353" glow="rgba(213,163,83,0.12)" />
         <StatCard label="Pending" value={pending} sub="Awaiting confirmation" icon={Clock} color="#f59e0b" glow="rgba(245,158,11,0.1)" />
         <StatCard label="Confirmed" value={confirmed} sub="Upcoming sessions" icon={CheckCircle} color="#3b82f6" glow="rgba(59,130,246,0.1)" />
-        <StatCard label="Revenue (Completed)" value={`Rs ${revenue.toLocaleString()}`} sub={`${completed} sessions done`} icon={TrendingUp} color="#22c55e" glow="rgba(34,197,94,0.1)" />
+        <StatCard label="Revenue (Done)" value={`Rs ${revenue.toLocaleString()}`} sub={`${completed} cuts done`} icon={TrendingUp} color="#22c55e" glow="rgba(34,197,94,0.1)" />
       </div>
 
       {/* Charts + Recent */}

@@ -779,50 +779,50 @@ export const BarberPortal: React.FC = () => {
               {/* TAB 1: DASHBOARD OVERVIEW */}
               {activeNavTab === 'dashboard' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeSlideUp 0.3s ease' }}>
-                  {/* STATS ROW */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '16px', padding: '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Completed Cuts Today</span>
-                        <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(34,197,94,0.15)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Scissors size={18} />
+                  {/* STATS ROW - 2x2 Grid on Mobile */}
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: isMobile ? '10px' : '16px' }}>
+                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: isMobile ? '12px' : '16px', padding: isMobile ? '12px 10px' : '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Completed Cuts</span>
+                        <div style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: '8px', background: 'rgba(34,197,94,0.15)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Scissors size={isMobile ? 15 : 18} />
                         </div>
                       </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e' }}>{completedCutsCount} Cuts</div>
-                      <div style={{ fontSize: '0.75rem', color: '#6a5a4a', marginTop: '4px' }}>Satisfied clients today</div>
+                      <div style={{ fontSize: isMobile ? '1.3rem' : '2rem', fontWeight: 800, color: '#22c55e' }}>{completedCutsCount} Cuts</div>
+                      <div style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#6a5a4a', marginTop: '2px' }}>Satisfied clients</div>
                     </div>
 
-                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '16px', padding: '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Waiting In Queue</span>
-                        <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Clock size={18} />
+                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: isMobile ? '12px' : '16px', padding: isMobile ? '12px 10px' : '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>In Queue</span>
+                        <div style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: '8px', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Clock size={isMobile ? 15 : 18} />
                         </div>
                       </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b' }}>{pendingQueueCount} Clients</div>
-                      <div style={{ fontSize: '0.75rem', color: '#6a5a4a', marginTop: '4px' }}>Next in line for hair cut</div>
+                      <div style={{ fontSize: isMobile ? '1.3rem' : '2rem', fontWeight: 800, color: '#f59e0b' }}>{pendingQueueCount} Clients</div>
+                      <div style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#6a5a4a', marginTop: '2px' }}>Next in line</div>
                     </div>
 
-                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '16px', padding: '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Est. Daily Revenue</span>
-                        <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(213,163,83,0.15)', color: '#d5a353', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <TrendingUp size={18} />
+                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: isMobile ? '12px' : '16px', padding: isMobile ? '12px 10px' : '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Est. Revenue</span>
+                        <div style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: '8px', background: 'rgba(213,163,83,0.15)', color: '#d5a353', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <TrendingUp size={isMobile ? 15 : 18} />
                         </div>
                       </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#d5a353' }}>Rs {estEarnings.toLocaleString()}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#6a5a4a', marginTop: '4px' }}>Total service value today</div>
+                      <div style={{ fontSize: isMobile ? '1.3rem' : '2rem', fontWeight: 800, color: '#d5a353' }}>Rs {estEarnings.toLocaleString()}</div>
+                      <div style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#6a5a4a', marginTop: '2px' }}>Today's value</div>
                     </div>
 
-                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '16px', padding: '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Rating & Reviews</span>
-                        <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(234,179,8,0.15)', color: '#eab308', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Star size={18} />
+                    <div className="hover-card-lift" style={{ background: 'linear-gradient(145deg, #241c16, #18130f)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: isMobile ? '12px' : '16px', padding: isMobile ? '12px 10px' : '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#a89a8a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Barber Rating</span>
+                        <div style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: '8px', background: 'rgba(234,179,8,0.15)', color: '#eab308', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Star size={isMobile ? 15 : 18} />
                         </div>
                       </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#eab308' }}>{activeTabBarber.rating || 4.9} ★</div>
-                      <div style={{ fontSize: '0.75rem', color: '#6a5a4a', marginTop: '4px' }}>Based on {activeTabBarber.totalCuts || 1200}+ cuts</div>
+                      <div style={{ fontSize: isMobile ? '1.3rem' : '2rem', fontWeight: 800, color: '#eab308' }}>{activeTabBarber.rating || 4.9} ★</div>
+                      <div style={{ fontSize: isMobile ? '0.68rem' : '0.75rem', color: '#6a5a4a', marginTop: '2px' }}>{activeTabBarber.totalCuts || 1200}+ cuts</div>
                     </div>
                   </div>
 
