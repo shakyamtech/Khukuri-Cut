@@ -7,7 +7,6 @@ import {
   Volume2,
   Bell,
   LogOut,
-  ArrowLeft,
   Lock,
   Eye,
   EyeOff,
@@ -498,8 +497,8 @@ export const BarberPortal: React.FC = () => {
                     <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.3rem', fontWeight: 700, color: '#d5a353', letterSpacing: '1.5px', lineHeight: 1 }}>
                       KHUKURI CUT
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: '#8a7a6a', whiteSpace: 'nowrap' }}>
-                      Barber Portal · 🏠 Home
+                    <div style={{ fontSize: '0.78rem', color: '#f9f6f2', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', marginTop: '2px' }}>
+                      {activeTabBarber.name}
                     </div>
                   </div>
                 )}
@@ -598,28 +597,6 @@ export const BarberPortal: React.FC = () => {
                   {sidebarOpen && <span>My Profile</span>}
                 </button>
 
-                <div style={{ height: '1px', background: 'rgba(213,163,83,0.15)', margin: '8px 0' }} />
-
-                <button
-                  onClick={() => navigate('/')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '12px',
-                    background: 'rgba(255,255,255,0.03)',
-                    color: '#d5a353',
-                    border: '1px solid rgba(213,163,83,0.2)',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <ArrowLeft size={16} />
-                  {sidebarOpen && <span>Main Website</span>}
-                </button>
               </nav>
             </div>
 
