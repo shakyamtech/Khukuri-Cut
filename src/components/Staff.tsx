@@ -270,45 +270,43 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
             {/* Top Gold Accent Strip */}
             <div style={{ height: '4px', background: 'linear-gradient(90deg, #d5a353, #c4893f, #d5a353)', width: '100%' }} />
 
-            <div style={{ padding: '22px 26px 26px' }}>
+            <div style={{ padding: '32px 30px 28px' }}>
               {/* Close Button */}
               <button
                 onClick={closeModal}
-                style={{ position: 'absolute', top: '14px', right: '14px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#8a7a6a', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+                style={{ position: 'absolute', top: '18px', right: '18px', background: 'rgba(213,163,83,0.1)', border: '1px solid rgba(213,163,83,0.25)', borderRadius: '50%', color: '#d5a353', width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, transition: 'all 0.2s ease' }}
+                title="Close"
               >
                 <X size={18} />
               </button>
 
               {!isSubmitted ? (
                 <>
-                  {/* Barber Header Info - Compact Horizontal Card */}
-                  <div style={{ marginBottom: '12px' }}>
+                  {/* Barber Header Info - Centered Portrait Layout */}
+                  <div style={{ textAlign: 'center', marginBottom: '14px' }}>
                     {currentBarber ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(213,163,83,0.18)', padding: '10px 14px', borderRadius: '12px' }}>
-                        <div style={{ width: '54px', height: '54px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #d5a353', flexShrink: 0, boxShadow: '0 0 14px rgba(213,163,83,0.3)' }}>
+                      <>
+                        <div style={{ width: '74px', height: '74px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 8px', border: '3px solid #d5a353', boxShadow: '0 0 22px rgba(213,163,83,0.35)' }}>
                           <img src={currentBarber.image} alt={currentBarber.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
                         </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                            <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.5rem', color: '#d5a353', margin: 0, letterSpacing: '0.8px', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {currentBarber.name}
-                            </h3>
-                            {renderStatusBadge(currentBarber.status)}
-                          </div>
-                          <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.75rem', color: '#a89a8a', margin: '2px 0 3px' }}>{currentBarber.role}</p>
-                          <p style={{ fontSize: '0.72rem', color: '#d8cfc4', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            <strong style={{ color: '#d5a353' }}>Specialty:</strong> {currentBarber.specialty}
-                          </p>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2.1rem', color: '#d5a353', marginBottom: '1px', letterSpacing: '1px', lineHeight: 1 }}>{currentBarber.name}</h3>
+                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '6px' }}>{currentBarber.role}</p>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                          {renderStatusBadge(currentBarber.status, currentBarber.statusNote)}
                         </div>
-                      </div>
+
+                        {/* Bio / Specialty Box */}
+                        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(213,163,83,0.18)', padding: '10px 14px', borderRadius: '10px', textAlign: 'center', marginBottom: '12px', fontSize: '0.82rem' }}>
+                          <p style={{ color: '#d5a353', marginBottom: '2px', fontWeight: 600 }}>Specialty: {currentBarber.specialty}</p>
+                          <p style={{ color: '#d8cfc4', fontSize: '0.8rem', lineHeight: '1.35' }}>{currentBarber.bio}</p>
+                        </div>
+                      </>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(213,163,83,0.18)', padding: '10px 14px', borderRadius: '12px' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>✂️</div>
-                        <div>
-                          <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.4rem', color: '#d5a353', margin: 0, letterSpacing: '0.8px', lineHeight: 1 }}>ANY MASTER BARBER</h3>
-                          <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.75rem', color: '#a89a8a', marginTop: '2px' }}>First available barber will be assigned upon arrival.</p>
-                        </div>
-                      </div>
+                      <>
+                        <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: 'linear-gradient(135deg, #d5a353, #b8863b)', color: '#191514', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px', fontSize: '1.8rem', boxShadow: '0 0 24px rgba(213,163,83,0.4)' }}>✂️</div>
+                        <h3 style={{ fontFamily: "'Teko', sans-serif", fontSize: '2rem', color: '#d5a353', marginBottom: '2px', letterSpacing: '1px' }}>ANY MASTER BARBER</h3>
+                        <p style={{ fontFamily: "'Merriweather', serif", fontStyle: 'italic', fontSize: '0.82rem', color: '#a89a8a', marginBottom: '12px' }}>First available barber will be assigned upon arrival.</p>
+                      </>
                     )}
                   </div>
 
