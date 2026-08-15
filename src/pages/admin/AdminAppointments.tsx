@@ -27,13 +27,20 @@ const STATUS_ICONS: Record<string, React.ElementType> = {
 
 function loadAppointments(): Appointment[] {
   const saved = localStorage.getItem('kc_appointments');
-  const real: Appointment[] = saved ? JSON.parse(saved) : [];
-  return [...real, ...DEMO_APPOINTMENTS];
+  if (saved !== null) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  localStorage.setItem('kc_appointments', JSON.stringify(DEMO_APPOINTMENTS));
+  return DEMO_APPOINTMENTS;
 }
 
-function saveRealAppointments(appointments: Appointment[]) {
-  const realOnes = appointments.filter((a) => !a.id.startsWith('d'));
-  localStorage.setItem('kc_appointments', JSON.stringify(realOnes));
+function saveAppointments(appointments: Appointment[]) {
+  localStorage.setItem('kc_appointments', JSON.stringify(appointments));
 }
 
 export const AdminAppointments: React.FC = () => {
@@ -55,7 +62,7 @@ export const AdminAppointments: React.FC = () => {
   const updateStatus = (id: string, status: Appointment['status']) => {
     setAppointments((prev) => {
       const updated = prev.map((a) => (a.id === id ? { ...a, status } : a));
-      saveRealAppointments(updated);
+      saveAppointments(updated);
       window.dispatchEvent(new Event('kc_appointment_updated'));
       return updated;
     });
@@ -66,12 +73,12 @@ export const AdminAppointments: React.FC = () => {
   const deleteAppt = (id: string) => {
     setAppointments((prev) => {
       const updated = prev.filter((a) => a.id !== id);
-      saveRealAppointments(updated);
+      saveAppointments(updated);
       window.dispatchEvent(new Event('kc_appointment_updated'));
       return updated;
     });
     setSelected(null);
-    showToast('Appointment removed.');
+    showToast('Appointment deleted successfully.');
   };
 
   const filtered = appointments.filter((a) => {
@@ -98,19 +105,20 @@ export const AdminAppointments: React.FC = () => {
         <div style={inputWrap}>
           <Search size={16} color="#6a5a4a" style={{ flexShrink: 0 }} />
           <input
-            style={searchInput}
+            type="text"
             placeholder="Search by name, phone, service..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            style={searchInput}
           />
         </div>
 
-        <div style={{ ...inputWrap, gap: '8px', minWidth: 160 }}>
+        <div style={{ ...inputWrap, gap: '8px', minWidth: 160, flex: 'none' }}>
           <Filter size={14} color="#6a5a4a" />
           <select
-            style={{ ...searchInput, paddingLeft: 0 }}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ ...searchInput, paddingLeft: 0, cursor: 'pointer' }}
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -120,17 +128,17 @@ export const AdminAppointments: React.FC = () => {
           </select>
         </div>
 
-        <div style={{ marginLeft: 'auto', color: '#6a5a4a', fontSize: '0.8rem' }}>
-          {filtered.length} appointments
+        <div style={{ marginLeft: 'auto', color: '#6a5a4a', fontSize: '0.82rem' }}>
+          {filtered.length} appointment{filtered.length !== 1 ? 's' : ''}
         </div>
       </div>
 
       {/* Table */}
       <div style={panelStyle}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 650 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr>
+              <tr style={{ borderBottom: '1px solid rgba(213,163,83,0.12)' }}>
                 {['Client', 'Service', 'Date & Time', 'Notes', 'Status', 'Actions'].map((h) => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
@@ -139,13 +147,13 @@ export const AdminAppointments: React.FC = () => {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#4a3a2a' }}>
+                  <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#6a5a4a' }}>
                     No appointments found.
                   </td>
                 </tr>
               ) : (
                 filtered.map((appt) => {
-                  const StatusIcon = STATUS_ICONS[appt.status];
+                  const StatusIcon = STATUS_ICONS[appt.status] || Clock;
                   return (
                     <tr
                       key={appt.id}
@@ -180,20 +188,22 @@ export const AdminAppointments: React.FC = () => {
                         </div>
                       </td>
                       <td style={tdStyle} onClick={(e) => e.stopPropagation()}>
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                           <StatusDropdown
                             current={appt.status}
                             onChange={(s) => updateStatus(appt.id, s)}
                           />
-                          {!appt.id.startsWith('d') && (
-                            <button
-                              onClick={() => deleteAppt(appt.id)}
-                              style={deleteBtn}
-                              title="Delete"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          )}
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Are you sure you want to delete appointment for ${appt.name}?`)) {
+                                deleteAppt(appt.id);
+                              }
+                            }}
+                            style={deleteBtn}
+                            title="Delete Appointment"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       </td>
                     </tr>
