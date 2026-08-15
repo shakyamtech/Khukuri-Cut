@@ -465,21 +465,42 @@ export const BarberPortal: React.FC = () => {
             }}
           >
             <div>
-              {/* Sidebar Header Logo & Barber Avatar */}
-              <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(213,163,83,0.12)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {/* Sidebar Header Company Brand Logo */}
+              <div
+                onClick={() => { navigate('/'); if (isMobile) setSidebarOpen(false); }}
+                style={{
+                  padding: '20px 16px',
+                  borderBottom: '1px solid rgba(213,163,83,0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  cursor: 'pointer',
+                }}
+                title="Go to Main Salon Homepage"
+              >
                 <div
-                  onClick={() => { navigate('/'); if (isMobile) setSidebarOpen(false); }}
-                  style={{ width: 44, height: 44, borderRadius: '50%', border: '2px solid #d5a353', overflow: 'hidden', flexShrink: 0, cursor: 'pointer', boxShadow: '0 0 12px rgba(213,163,83,0.3)' }}
-                  title="Go to Homepage"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #d5a353, #b8863b)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 16px rgba(213,163,83,0.4)',
+                    flexShrink: 0,
+                  }}
                 >
-                  <img src={activeTabBarber.image} alt={activeTabBarber.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+                  <Scissors size={20} color="#191514" />
                 </div>
                 {sidebarOpen && (
                   <div style={{ overflow: 'hidden' }}>
-                    <div style={{ color: '#f9f6f2', fontSize: '0.95rem', fontWeight: 800, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                      {activeTabBarber.name}
+                    <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.3rem', fontWeight: 700, color: '#d5a353', letterSpacing: '1.5px', lineHeight: 1 }}>
+                      KHUKURI CUT
                     </div>
-                    <div style={{ color: '#d5a353', fontSize: '0.72rem', fontWeight: 600 }}>{activeTabBarber.role}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#8a7a6a', whiteSpace: 'nowrap' }}>
+                      Barber Portal · 🏠 Home
+                    </div>
                   </div>
                 )}
               </div>
