@@ -157,20 +157,25 @@ export const AdminLayout: React.FC = () => {
       >
         {/* Sidebar Header */}
         <div style={styles.sidebarHeader}>
-          {sidebarOpen && (
-            <div style={styles.logoWrap}>
-              <div style={styles.logoIcon}>
-                <Scissors size={18} color="#191514" />
-              </div>
+          <div
+            onClick={() => navigate('/')}
+            style={{ ...styles.logoWrap, cursor: 'pointer', flex: 1 }}
+            title="Go to Main Salon Homepage"
+          >
+            <div style={styles.logoIcon}>
+              <Scissors size={18} color="#191514" />
+            </div>
+            {sidebarOpen && (
               <div>
                 <div style={styles.logoTitle}>KHUKURI CUT</div>
-                <div style={styles.logoSub}>Admin Panel</div>
+                <div style={styles.logoSub}>Admin Panel · 🏠 Home</div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             style={styles.toggleBtn}
+            title={sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
           >
             {sidebarOpen ? <X size={18} color="#d5a353" /> : <Menu size={18} color="#d5a353" />}
           </button>
