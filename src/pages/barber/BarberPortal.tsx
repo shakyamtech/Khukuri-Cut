@@ -479,25 +479,25 @@ export const BarberPortal: React.FC = () => {
               >
                 <div
                   style={{
-                    width: 40,
-                    height: 40,
+                    width: 38,
+                    height: 38,
                     borderRadius: '10px',
                     background: 'linear-gradient(135deg, #d5a353, #b8863b)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 16px rgba(213,163,83,0.4)',
+                    boxShadow: '0 4px 14px rgba(213,163,83,0.35)',
                     flexShrink: 0,
                   }}
                 >
-                  <Scissors size={20} color="#191514" />
+                  <Scissors size={19} color="#191514" />
                 </div>
                 {sidebarOpen && (
                   <div style={{ overflow: 'hidden' }}>
-                    <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.3rem', fontWeight: 700, color: '#d5a353', letterSpacing: '1.5px', lineHeight: 1 }}>
+                    <div style={{ fontFamily: "'Teko', sans-serif", fontSize: '1.25rem', fontWeight: 700, color: '#d5a353', letterSpacing: '1.5px', lineHeight: 1 }}>
                       KHUKURI CUT
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#f9f6f2', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#d8cfc4', fontWeight: 600, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', marginTop: '2px', letterSpacing: '0.3px' }}>
                       {activeTabBarber.name}
                     </div>
                   </div>
