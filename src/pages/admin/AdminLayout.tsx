@@ -17,6 +17,7 @@ import {
   playSweetDingSound,
   APPOINTMENT_EVENT_CREATED,
   APPOINTMENT_EVENT_UPDATED,
+  adminChannel,
 } from '../../utils/audioAlert';
 import type { Appointment } from './AdminDashboard';
 
@@ -37,6 +38,11 @@ const navItems = [
   { path: '/admin/products', label: 'Products', icon: ShoppingBag },
 ];
 
+interface AppointmentToast {
+  name: string;
+  service: string;
+}
+
 function getPendingCount(): number {
   try {
     const saved = localStorage.getItem('kc_appointments');
@@ -54,7 +60,7 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pendingCount, setPendingCount] = useState<number>(getPendingCount);
-  const [toastAlert, setToastAlert] = useState<{ name: string; service: string } | null>(null);
+  const [toastAlert, setToastAlert] = useState<AppointmentToast | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('kc_admin_auth');
@@ -68,23 +74,36 @@ export const AdminLayout: React.FC = () => {
       setPendingCount(getPendingCount());
     };
 
-    const handleNewAppointment = (e: Event) => {
+    const triggerAlert = (name: string, service: string) => {
       updateCount();
       playSweetDingSound();
-
-      const detail = (e as CustomEvent)?.detail;
-      const clientName = detail?.name || 'New Client';
-      const serviceName = detail?.service || 'Appointment';
-
-      setToastAlert({ name: clientName, service: serviceName });
-      setTimeout(() => setToastAlert(null), 4000);
+      setToastAlert({ name, service });
+      setTimeout(() => setToastAlert(null), 4500);
     };
+
+    const handleNewAppointment = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      triggerAlert(detail?.name || 'New Client', detail?.service || 'Appointment');
+    };
+
+    // Listen to Cross-Tab BroadcastChannel messages (from Customer booking tab)
+    if (adminChannel) {
+      adminChannel.onmessage = (evt) => {
+        if (evt.data?.type === 'NEW_BOOKING') {
+          const appt = evt.data.appointment;
+          triggerAlert(appt?.name || 'New Client', appt?.service || 'Appointment');
+        }
+      };
+    }
 
     window.addEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
     window.addEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
     window.addEventListener('storage', updateCount);
 
     return () => {
+      if (adminChannel) {
+        adminChannel.onmessage = null;
+      }
       window.removeEventListener(APPOINTMENT_EVENT_CREATED, handleNewAppointment);
       window.removeEventListener(APPOINTMENT_EVENT_UPDATED, updateCount);
       window.removeEventListener('storage', updateCount);

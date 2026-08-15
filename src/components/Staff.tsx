@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { ExternalLink, X, Calendar, Clock, Scissors, CheckCircle2, UserCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { notifyNewBookingCrossTab } from '../utils/audioAlert';
 import { getStoredStaff, STAFF_UPDATED_EVENT } from '../utils/staffStorage';
 import type { StaffMember, StaffStatus } from '../utils/staffStorage';
 
@@ -98,6 +99,9 @@ export const Staff: React.FC<StaffProps> = ({ initialService = '' }) => {
 
     const existing = JSON.parse(localStorage.getItem('kc_appointments') || '[]');
     localStorage.setItem('kc_appointments', JSON.stringify([newAppt, ...existing]));
+
+    // Broadcast booking across tabs (triggers chime sound in Admin panel tab!)
+    notifyNewBookingCrossTab(newAppt);
 
     // Dispatch event for Admin notification & audio ding
     window.dispatchEvent(new CustomEvent('kc_appointment_created', { detail: newAppt }));
